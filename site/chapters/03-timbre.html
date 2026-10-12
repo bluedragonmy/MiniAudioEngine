@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timbre &amp; Harmonics · Sound Basics</title>
+  <meta name="description" content="Chapter 3: why a saw and a sine at the same pitch sound different, and what a filter removes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 3</span><span lang="zh-Hant">第 3 章</span></p>
+    <h1><span lang="en">Timbre &amp; harmonics</span><span lang="zh-Hant">音色與泛音</span></h1>
+    <p class="lede">
+      <span lang="en">A piano and a guitar can play the same note and still sound nothing alike. The difference is hiding above the note, in its harmonics.</span>
+      <span lang="zh-Hant">鋼琴和吉他可以彈同一個音，聽起來卻完全不同。差別藏在那個音的上方，也就是它的泛音裡。</span>
+    </p>
+
+    <h2><span lang="en">Every sound is a stack of sines</span><span lang="zh-Hant">每個聲音都是一疊正弦波</span></h2>
+    <p>
+      <span lang="en">In chapter 1 you heard a pure sine. Real instruments are never that simple. When you play A2 (110 Hz), the string also vibrates at 220, 330, 440 Hz and so on — whole-number multiples of the note called <strong>harmonics</strong>. The note you name is the lowest one, the <strong>fundamental</strong>. How loud each harmonic is gives the sound its character: its <strong>timbre</strong>.</span>
+      <span lang="zh-Hant">第 1 章聽到的是純正弦波，但真實的樂器從來沒有這麼單純。彈 A2（110 Hz）的時候，弦同時也在 220、330、440 Hz……振動，這些整數倍的頻率叫做<strong>泛音</strong>。我們叫得出名字的那個音是最低的一個，叫<strong>基音</strong>。每個泛音有多大聲，決定了聲音的個性，也就是<strong>音色</strong>。</span>
+    </p>
+    <p>
+      <span lang="en">Synths start from a few classic shapes. Each one is just a recipe for how loud the harmonics are. Pick a shape, then add harmonics one at a time and watch the wave take shape.</span>
+      <span lang="zh-Hant">合成器從幾種經典波形出發，每一種其實就是一份「各個泛音要多大聲」的食譜。選一個波形，再一個一個加入泛音，看波形如何慢慢成形。</span>
+    </p>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title"><span lang="en">Try it: build a wave from harmonics</span><span lang="zh-Hant">動手試：用泛音疊出波形</span></div>
+      <canvas id="wave1" aria-label="Two cycles of the waveform"></canvas>
+      <canvas id="spec1" class="spectrum" aria-label="Level of each harmonic"></canvas>
+      <div class="btn-row" role="group" aria-label="Wave shape" id="shapes1">
+        <button class="btn" type="button" data-shape="sine"><span lang="en">Sine</span><span lang="zh-Hant">正弦波</span></button>
+        <button class="btn" type="button" data-shape="saw"><span lang="en">Saw</span><span lang="zh-Hant">鋸齒波</span></button>
+        <button class="btn" type="button" data-shape="square"><span lang="en">Square</span><span lang="zh-Hant">方波</span></button>
+        <button class="btn" type="button" data-shape="triangle"><span lang="en">Triangle</span><span lang="zh-Hant">三角波</span></button>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="harm1"><span lang="en">Harmonics</span><span lang="zh-Hant">泛音數量</span></label>
+          <input type="range" id="harm1" min="1" max="40" step="1" />
+          <output id="harm1-out" for="harm1"></output>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play1" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice audio-unavailable" hidden style="margin:12px 0 0">
+        <span lang="en">Audio needs the page to be served over http:// (see the README). The drawings still work.</span>
+        <span lang="zh-Hant">聲音需要透過 http:// 開啟網頁（見 README）。圖仍然可以正常操作。</span>
+      </p>
+    </section>
+
+    <ul>
+      <li><span lang="en"><strong>Saw</strong> — every harmonic, each a bit quieter than the last. Bright and buzzy: the starting point for strings, brass and most synth leads.</span><span lang="zh-Hant"><strong>鋸齒波</strong>：所有泛音都有，一個比一個小聲一點。明亮、有嗡嗡聲，是弦樂、銅管和大部分合成器主旋律的起點。</span></li>
+      <li><span lang="en"><strong>Square</strong> — only the odd harmonics (1, 3, 5…). Hollow and woody, a bit like a clarinet.</span><span lang="zh-Hant"><strong>方波</strong>：只有奇數泛音（1、3、5……）。聽起來空空的、有木頭感，有點像單簧管。</span></li>
+      <li><span lang="en"><strong>Triangle</strong> — odd harmonics too, but they fade out fast. Soft, close to a flute or an ocarina.</span><span lang="zh-Hant"><strong>三角波</strong>：也只有奇數泛音，但衰減得很快。柔和，接近長笛或陶笛。</span></li>
+    </ul>
+    <p class="notice">
+      <span lang="en">Notice the little ripples next to the sharp corners of the square and saw? Adding more harmonics squeezes them closer to the edge but never removes them. That's called the Gibbs phenomenon. We also stop adding harmonics at the Nyquist limit from chapter 2, so this synth can't alias.</span>
+      <span lang="zh-Hant">注意到方波和鋸齒波尖角旁邊的小波紋了嗎？泛音加得越多，波紋越擠向邊緣，但永遠不會消失，這叫做 Gibbs 現象。另外，泛音只疊到第 2 章講的 Nyquist 上限為止，所以這個合成器不會產生 aliasing。</span>
+    </p>
+
+    <h2><span lang="en">Filters remove harmonics</span><span lang="zh-Hant">濾波器拿掉泛音</span></h2>
+    <p>
+      <span lang="en">If timbre is a recipe of harmonics, the quickest way to change it is to take some away. That's what a <strong>filter</strong> does. A <strong>low-pass filter</strong> lets everything below its <strong>cutoff</strong> through and turns down what's above, so the sound gets darker and rounder. Start with a bright saw and carve it down — this is called <strong>subtractive synthesis</strong>, and it's how most synths work.</span>
+      <span lang="zh-Hant">如果音色是一份泛音食譜，最快改變它的方法就是拿掉一些泛音，這就是<strong>濾波器</strong>的工作。<strong>低通濾波器</strong>讓<strong>截止頻率（cutoff）</strong>以下的聲音通過，把以上的部分調小，聲音就會變暗、變圓潤。從明亮的鋸齒波開始往下削，這叫做<strong>減法合成</strong>，大部分合成器都是這樣運作的。</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Try it: filter a saw wave</span><span lang="zh-Hant">動手試：替鋸齒波濾波</span></div>
+      <canvas id="wave2" aria-label="Two cycles of the filtered waveform"></canvas>
+      <canvas id="spec2" class="spectrum" aria-label="Harmonics after the filter, with the filter's response curve"></canvas>
+      <div class="btn-row" role="group" aria-label="Filter type" id="filters2">
+        <button class="btn" type="button" data-filter="none"><span lang="en">No filter</span><span lang="zh-Hant">不濾波</span></button>
+        <button class="btn" type="button" data-filter="onepole"><span lang="en">Gentle (6 dB/oct)</span><span lang="zh-Hant">平緩（6 dB/oct）</span></button>
+        <button class="btn" type="button" data-filter="biquad"><span lang="en">Steep (12 dB/oct)</span><span lang="zh-Hant">陡峭（12 dB/oct）</span></button>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="cutoff2"><span lang="en">Cutoff</span><span lang="zh-Hant">截止頻率</span></label>
+          <input type="range" id="cutoff2" min="0" max="1000" step="1" />
+          <output id="cutoff2-out" for="cutoff2"></output>
+        </div>
+        <div class="control">
+          <label for="q2"><span lang="en">Resonance</span><span lang="zh-Hant">共振</span></label>
+          <input type="range" id="q2" min="0" max="1000" step="1" />
+          <output id="q2-out" for="q2"></output>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play2" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Play, then drag the cutoff slowly from top to bottom. With the steep filter, turn the resonance up and try again: the peak at the cutoff is the classic "wow" of a synth filter sweep. Resonance only applies to the steep filter.</span>
+        <span lang="zh-Hant">按下播放，再把截止頻率從上往下慢慢拉。換成陡峭的濾波器，把共振調高再試一次：截止頻率附近凸起的那一塊，就是合成器濾波掃頻那種經典的「哇」聲。共振只對陡峭的濾波器有作用。</span>
+      </p>
+    </section>
+
+    <p>
+      <span lang="en">The two filters differ in <strong>slope</strong>: how fast they turn things down past the cutoff. The gentle one loses 6 dB for every octave; the steep one loses 12. Steeper slopes sound more obviously "filtered". Synths often go to 24 dB/oct by chaining two steep filters.</span>
+      <span lang="zh-Hant">兩種濾波器的差別在於<strong>斜率</strong>：超過截止頻率後衰減得多快。平緩的每高一個八度少 6 dB，陡峭的少 12 dB。斜率越陡，「被濾過」的感覺越明顯。合成器常把兩個陡峭濾波器串起來，做到 24 dB/oct。</span>
+    </p>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Same idea, different job: EQ</span><span lang="zh-Hant">同樣的原理，不同的用途：EQ</span></div>
+      <p>
+        <span lang="en">The EQ on every mixer channel is a set of these filters. A <strong>high-pass</strong> (the mirror image: removes lows) on a vocal or guitar clears out rumble that only muddies the mix. A gentle low-pass on a harsh cymbal softens it. You'll use this constantly in chapter 6.</span>
+        <span lang="zh-Hant">每個混音軌道上的 EQ，就是一組這樣的濾波器。在人聲或吉他上加一個<strong>高通濾波器</strong>（低通的相反：拿掉低頻），可以清掉只會讓混音變糊的低頻隆隆聲。在刺耳的鈸上加一點平緩的低通，可以讓它柔和一點。第 6 章會常常用到。</span>
+      </p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en">Open a basic synth (Ableton: <em>Analog</em> or <em>Wavetable</em>, FL Studio: <em>3x Osc</em>, Logic: <em>Retro Synth</em>) and switch between sine, saw and square while holding a note. Watch a spectrum analyzer on the same track.</span>
+          <span lang="zh-Hant">開一個基本合成器（Ableton：<em>Analog</em> 或 <em>Wavetable</em>，FL Studio：<em>3x Osc</em>，Logic：<em>Retro Synth</em>），按住一個音，在正弦波、鋸齒波、方波之間切換，同時看同一軌上的頻譜分析器。</span>
+        </li>
+        <li>
+          <span lang="en">Find the synth's filter. Set it to low-pass, then sweep <em>Cutoff</em> and <em>Resonance</em> (sometimes called <em>Res</em> or <em>Q</em>).</span>
+          <span lang="zh-Hant">找到合成器的濾波器，設成低通（low-pass），然後轉動 <em>Cutoff</em> 和 <em>Resonance</em>（有時叫 <em>Res</em> 或 <em>Q</em>）。</span>
+        </li>
+        <li>
+          <span lang="en">Automate the cutoff so it opens slowly over 8 bars. You've just made a filter sweep, one of the most common moves in electronic music.</span>
+          <span lang="zh-Hant">替 cutoff 畫自動化，讓它在 8 個小節內慢慢打開。你剛做出了濾波掃頻，這是電子音樂裡最常見的手法之一。</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en">A note = a <strong>fundamental</strong> + <strong>harmonics</strong> at whole-number multiples.</span><span lang="zh-Hant">一個音＝<strong>基音</strong>＋整數倍頻率的<strong>泛音</strong>。</span></li>
+      <li><span lang="en"><strong>Timbre</strong> is the balance of harmonics. Saw = all, square = odd, triangle = odd and quiet.</span><span lang="zh-Hant"><strong>音色</strong>就是各個泛音的比例。鋸齒波＝全部都有，方波＝只有奇數，三角波＝奇數而且很小聲。</span></li>
+      <li><span lang="en">A <strong>low-pass filter</strong> removes harmonics above its <strong>cutoff</strong>; <strong>resonance</strong> boosts the cutoff itself.</span><span lang="zh-Hant"><strong>低通濾波器</strong>拿掉<strong>截止頻率</strong>以上的泛音；<strong>共振</strong>會把截止頻率附近推高。</span></li>
+    </ul>
+
+    <p class="notice">
+      <span lang="en">Under the hood: <code>AdditiveOscillator</code>, <code>LowPassFilter</code> and <code>Biquad</code> in <code>cpp/src/</code>, ported line for line to JavaScript and checked with identical tests.</span>
+      <span lang="zh-Hant">技術細節：<code>cpp/src/</code> 裡的 <code>AdditiveOscillator</code>、<code>LowPassFilter</code> 和 <code>Biquad</code>，逐行移植成 JavaScript，並用相同的測試驗證。</span>
+    </p>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="02-digital-sound.html"><span lang="en">← Digital sound</span><span lang="zh-Hant">← 數位聲音</span></a>
+      <a href="04-envelopes.html"><span lang="en">Next: The shape of a sound →</span><span lang="zh-Hant">下一章：聲音的形狀 →</span></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script type="module" src="../js/ch3.js"></script>
+</body>
+</html>

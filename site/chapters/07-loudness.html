@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loudness · Sound Basics</title>
+  <meta name="description" content="Chapter 7: why louder always sounds better, what LUFS measures, and what streaming services do to your master." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 7</span><span lang="zh-Hant">第 7 章</span></p>
+    <h1><span lang="en">Loudness</span><span lang="zh-Hant">響度</span></h1>
+    <p class="lede">
+      <span lang="en">Play two identical mixes, one slightly louder, and almost everyone prefers the louder one. That one fact explains a whole era of over-squashed music, and why it doesn't work any more.</span>
+      <span lang="zh-Hant">播放兩個一模一樣的混音，其中一個稍微大聲一點，幾乎每個人都會選大聲的那個。光是這件事，就解釋了一整個時代被壓得扁扁的音樂，以及為什麼這招現在已經沒用了。</span>
+    </p>
+
+    <h2><span lang="en">Louder sounds better (even when it isn't)</span><span lang="zh-Hant">大聲聽起來比較好（即使其實沒有）</span></h2>
+    <p>
+      <span lang="en">Listen to A and B below and pick the one you like better. Switch back and forth as much as you want.</span>
+      <span lang="zh-Hant">聽聽下面的 A 和 B，選出你比較喜歡的那個。想切換幾次都可以。</span>
+    </p>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title"><span lang="en">A or B?</span><span lang="zh-Hant">A 還是 B？</span></div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn" id="ab-a" type="button" aria-pressed="false"><span lang="en">▶ Play A</span><span lang="zh-Hant">▶ 播放 A</span></button>
+        <button class="btn" id="ab-b" type="button" aria-pressed="false"><span lang="en">▶ Play B</span><span lang="zh-Hant">▶ 播放 B</span></button>
+        <button class="btn" id="ab-stop" type="button"><span lang="en">■ Stop</span><span lang="zh-Hant">■ 停止</span></button>
+      </div>
+      <div class="quiz-options">
+        <span class="notice" style="align-self:center"><span lang="en">I prefer:</span><span lang="zh-Hant">我比較喜歡：</span></span>
+        <button class="btn" type="button" data-prefer="a">A</button>
+        <button class="btn" type="button" data-prefer="b">B</button>
+      </div>
+      <div class="quiz-feedback" id="ab-feedback" aria-live="polite"></div>
+      <div class="toggle-row">
+        <button class="btn" type="button" id="ab-match" aria-pressed="false" hidden><span lang="en">Match their loudness</span><span lang="zh-Hant">把兩者響度對齊</span></button>
+      </div>
+    </section>
+
+    <p>
+      <span lang="en">Our ears get more sensitive to bass and treble as the volume rises, so a louder copy seems fuller and brighter — even though nothing about the mix changed. This is why you should always compare things (two mixes, a plugin on and off, your track and a reference) at <strong>matched loudness</strong>.</span>
+      <span lang="zh-Hant">音量越大，耳朵對低音和高音越敏感，所以大聲的版本聽起來比較飽滿、比較亮，雖然混音本身完全沒有變。這就是為什麼比較任何東西（兩個混音版本、外掛開和關、你的歌和參考曲）時，一定要在<strong>響度對齊</strong>的狀態下比。</span>
+    </p>
+
+    <h2><span lang="en">Peak is not loudness</span><span lang="zh-Hant">峰值不等於響度</span></h2>
+    <p>
+      <span lang="en">A peak meter shows the single highest sample. But our ears care about how much energy there is over time. Below, all three sounds peak at exactly −1 dBFS. Play them.</span>
+      <span lang="zh-Hant">峰值表顯示的是最高的那一個取樣點，但耳朵在意的是一段時間內有多少能量。下面三個聲音的峰值都剛好是 −1 dBFS，播放聽聽看。</span>
+    </p>
+    <p>
+      <span lang="en">That's what <strong>LUFS</strong> (Loudness Units relative to Full Scale) measures. It's defined by the broadcast standard ITU-R BS.1770: filter the audio to roughly match how our ears weigh frequencies, take the average energy, and ignore near-silent parts. Like dBFS, the numbers are negative and closer to 0 means louder.</span>
+      <span lang="zh-Hant">這就是 <strong>LUFS</strong>（相對於滿刻度的響度單位）在量的東西。它由廣播標準 ITU-R BS.1770 定義：先用濾波器模擬耳朵對各頻率的敏感度，再取平均能量，並忽略幾乎無聲的部分。跟 dBFS 一樣，數字是負的，越接近 0 越大聲。</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Same peak, different loudness</span><span lang="zh-Hant">同樣的峰值，不同的響度</span></div>
+      <div class="loud-table" id="loud-table"></div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">The bars show integrated loudness in LUFS. The peak column is identical for all three.</span>
+        <span lang="zh-Hant">長條顯示的是整體響度（LUFS）。三者的峰值欄位完全一樣。</span>
+      </p>
+    </section>
+
+    <h2><span lang="en">What streaming does to your master</span><span lang="zh-Hant">串流平台會對你的母帶做什麼</span></h2>
+    <p>
+      <span lang="en">Streaming services measure every song's LUFS and turn it to a common target so listeners don't have to keep reaching for the volume. Spotify aims for about <strong>−14 LUFS</strong> by default, YouTube about −14, Apple Music about −16. If your master is louder, it simply gets turned down.</span>
+      <span lang="zh-Hant">串流平台會量每首歌的 LUFS，把它調到一個共同的目標，聽眾就不用一直調音量。Spotify 預設大約是 <strong>−14 LUFS</strong>，YouTube 約 −14，Apple Music 約 −16。如果你的母帶比較大聲，它就只會被調小。</span>
+    </p>
+    <p>
+      <span lang="en">So what happens if you crank a master to be as loud as possible? Drag the slider: more drive means more of the waveform gets clipped. Then switch to "after Spotify" to hear what a listener actually gets.</span>
+      <span lang="zh-Hant">那如果把母帶推到能有多大聲就多大聲，會怎樣？拉動滑桿：drive 越多，波形被削掉的部分就越多。再切換到「Spotify 處理後」，聽聽聽眾實際聽到的是什麼。</span>
+    </p>
+
+    <!-- Demo 3 -->
+    <section class="demo" aria-labelledby="demo3-title">
+      <div class="demo-title" id="demo3-title"><span lang="en">Master it loud</span><span lang="zh-Hant">把母帶推大聲</span></div>
+      <canvas id="master-wave" aria-label="One bar of the master waveform"></canvas>
+      <div class="readout" aria-live="polite">
+        <span><span lang="en">Uploaded</span><span lang="zh-Hant">上傳時</span> <b id="r-up"></b></span>
+        <span><span lang="en">Spotify turns it</span><span lang="zh-Hant">Spotify 調整</span> <b id="r-norm"></b></span>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="drive">Drive</label>
+          <input type="range" id="drive" min="0" max="18" step="0.5" />
+          <output id="drive-out" for="drive"></output>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <button class="btn" type="button" id="m-norm" aria-pressed="false"><span lang="en">Hear it after Spotify (−14 LUFS)</span><span lang="zh-Hant">聽 Spotify 處理後（−14 LUFS）</span></button>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play3" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Real mastering uses limiters, which are much cleaner than this hard clipper, but the trade is the same: every extra dB of loudness costs dynamics, and on streaming services you don't keep the loudness anyway.</span>
+        <span lang="zh-Hant">真正的母帶處理會用 limiter，比這裡的硬削波乾淨很多，但代價是一樣的：多換一分響度，就少一分動態，而且在串流平台上，多出來的響度反正也留不住。</span>
+      </p>
+    </section>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en">Put a loudness meter on your master. Logic has one built in (<em>Metering → Loudness Meter</em>); for any DAW, the free <em>Youlean Loudness Meter</em> works well.</span>
+          <span lang="zh-Hant">在 master 上加一個響度表。Logic 有內建的（<em>Metering → Loudness Meter</em>）；任何 DAW 都可以用免費的 <em>Youlean Loudness Meter</em>。</span>
+        </li>
+        <li>
+          <span lang="en">Play a commercial track you like and read its integrated LUFS, then play yours. That gap is what you're actually comparing when "theirs sounds better".</span>
+          <span lang="zh-Hant">播放一首你喜歡的市售歌曲，看它的整體 LUFS，再播你自己的歌。當你覺得「人家的比較好聽」時，你比較的其實就是這個差距。</span>
+        </li>
+        <li>
+          <span lang="en">Before judging any plugin, turn its output down until switching it on and off doesn't change the loudness. Does it still sound better?</span>
+          <span lang="zh-Hant">評估任何外掛之前，先把它的輸出調小，直到開關它時響度不變。這樣還是比較好聽嗎？</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en">Louder sounds better to our ears, so always compare at <strong>matched loudness</strong>.</span><span lang="zh-Hant">耳朵會覺得大聲比較好聽，所以比較時一定要<strong>響度對齊</strong>。</span></li>
+      <li><span lang="en"><strong>Peak</strong> = highest sample. <strong>LUFS</strong> = perceived loudness over time.</span><span lang="zh-Hant"><strong>峰值</strong>＝最高的取樣點。<strong>LUFS</strong>＝一段時間內感受到的響度。</span></li>
+      <li><span lang="en">Streaming turns loud masters down to around −14 LUFS; extra loudness only costs you dynamics.</span><span lang="zh-Hant">串流平台會把大聲的母帶調小到約 −14 LUFS，多出來的響度只會讓你失去動態。</span></li>
+    </ul>
+
+    <p class="notice">
+      <span lang="en">Under the hood: <code>cpp/src/LoudnessMeter.cpp</code> implements BS.1770 K-weighting and EBU R128 gating; its tests check the standard's reference value (a 997 Hz sine at 0 dBFS reads −3.01 LUFS).</span>
+      <span lang="zh-Hant">技術細節：<code>cpp/src/LoudnessMeter.cpp</code> 實作了 BS.1770 的 K-weighting 和 EBU R128 的 gating；測試會檢查標準規定的參考值（997 Hz、0 dBFS 正弦波＝−3.01 LUFS）。</span>
+    </p>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="06-mixing.html"><span lang="en">← Mixing basics</span><span lang="zh-Hant">← 混音入門</span></a>
+      <a href="../index.html"><span lang="en">All chapters →</span><span lang="zh-Hant">所有章節 →</span></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script type="module" src="../js/ch7.js"></script>
+</body>
+</html>

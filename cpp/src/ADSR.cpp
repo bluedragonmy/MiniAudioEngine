@@ -1,8 +1,9 @@
 #include "ADSR.h"
 
 ADSR::ADSR()
-    : currentState(State::Idle), sampleRate(44100.0), currentLevel(0.0),
-      attackTime(0.01), decayTime(0.1), sustainLevel(1.0), releaseTime(0.1)
+    : currentState(State::Idle), sampleRate(44100.0),
+      attackTime(0.01), decayTime(0.1), sustainLevel(1.0), releaseTime(0.1),
+      currentLevel(0.0)
 {
     calculateRates();
 }
@@ -25,7 +26,8 @@ void ADSR::setParameters(double attack, double decay, double sustain, double rel
 void ADSR::calculateRates()
 {
     attackRate = (attackTime > 0.0) ? (1.0 / (attackTime * sampleRate)) : 1.0;
-    decayRate = (decayTime > 0.0) ? ((1.0 - sustainLevel) / (decayTime * sampleRate)) : 0.0;
+    // decay = 0 要立刻跳到 sustain（原本是 0.0，會永遠卡在最大音量）
+    decayRate = (decayTime > 0.0) ? ((1.0 - sustainLevel) / (decayTime * sampleRate)) : 1.0;
     releaseRate = (releaseTime > 0.0) ? (sustainLevel / (releaseTime * sampleRate)) : 1.0;
 }
 

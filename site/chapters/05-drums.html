@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drums &amp; Rhythm · Sound Basics</title>
+  <meta name="description" content="Chapter 5: build a kick, snare and hi-hat from oscillators, noise, filters and envelopes, then program a beat." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 5</span><span lang="zh-Hant">第 5 章</span></p>
+    <h1><span lang="en">Drums &amp; rhythm</span><span lang="zh-Hant">鼓與節奏</span></h1>
+    <p class="lede">
+      <span lang="en">Classic drum machines like the 808 never recorded a real drum. They built every hit from the pieces you already know: oscillators, noise, filters and envelopes.</span>
+      <span lang="zh-Hant">像 808 這樣的經典鼓機，從來沒有錄過真正的鼓。每一聲打擊都是用你已經學過的零件組出來的：振盪器、噪音、濾波器和包絡。</span>
+    </p>
+
+    <h2><span lang="en">Three recipes</span><span lang="zh-Hant">三份食譜</span></h2>
+    <p>
+      <span lang="en">One new ingredient first: <strong>noise</strong>. It's random numbers, so it contains every frequency at once — the sound of static or a "shhh". Pitched sounds come from oscillators; hissy sounds come from noise.</span>
+      <span lang="zh-Hant">先介紹一個新材料：<strong>噪音</strong>。噪音就是一串亂數，同時包含了所有頻率，聽起來像收音機的雜訊或「噓——」的聲音。有音高的聲音來自振盪器，嘶嘶聲則來自噪音。</span>
+    </p>
+    <ul>
+      <li><span lang="en"><strong>Kick</strong> = a sine wave whose pitch drops fast. The drop is the "punch"; the low tail is the "boom".</span><span lang="zh-Hant"><strong>Kick（大鼓）</strong>＝音高快速下降的正弦波。下降的瞬間是「衝擊感」，低沉的尾巴是「轟」的那一聲。</span></li>
+      <li><span lang="en"><strong>Snare</strong> = a short tone (the drum skin) + high-passed noise (the rattling wires underneath).</span><span lang="zh-Hant"><strong>Snare（小鼓）</strong>＝短促的音（鼓皮）＋高通過的噪音（鼓底下那排響弦的沙沙聲）。</span></li>
+      <li><span lang="en"><strong>Hi-hat</strong> = noise through a high-pass filter, very short. Make it longer and it becomes an open hat.</span><span lang="zh-Hant"><strong>Hi-hat（腳踏鈸）</strong>＝經過高通濾波的噪音，非常短。拉長一點就變成開放的 hi-hat。</span></li>
+    </ul>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title"><span lang="en">Try it: build the kit</span><span lang="zh-Hant">動手試：組一套鼓</span></div>
+
+      <div class="drum-grid">
+        <div class="drum-card">
+          <div class="drum-head"><b><span lang="en">Kick</span><span lang="zh-Hant">大鼓</span></b><button class="btn primary" type="button" data-hit="kick">▶</button></div>
+          <canvas id="shot-kick" class="short" aria-label="Kick waveform"></canvas>
+          <div class="controls">
+            <div class="control"><label for="k-start"><span lang="en">Start pitch</span><span lang="zh-Hant">起始音高</span></label><input type="range" id="k-start" min="60" max="400" step="1" data-param="kick.start" /><output for="k-start"></output></div>
+            <div class="control"><label for="k-end"><span lang="en">End pitch</span><span lang="zh-Hant">結束音高</span></label><input type="range" id="k-end" min="30" max="120" step="1" data-param="kick.end" /><output for="k-end"></output></div>
+            <div class="control"><label for="k-drop"><span lang="en">Pitch drop</span><span lang="zh-Hant">音高下降</span></label><input type="range" id="k-drop" min="10" max="400" step="1" data-param="kick.pitchDecay" /><output for="k-drop"></output></div>
+            <div class="control"><label for="k-dec"><span lang="en">Decay</span><span lang="zh-Hant">衰減</span></label><input type="range" id="k-dec" min="50" max="1500" step="1" data-param="kick.decay" /><output for="k-dec"></output></div>
+          </div>
+        </div>
+
+        <div class="drum-card">
+          <div class="drum-head"><b><span lang="en">Snare</span><span lang="zh-Hant">小鼓</span></b><button class="btn primary" type="button" data-hit="snare">▶</button></div>
+          <canvas id="shot-snare" class="short" aria-label="Snare waveform"></canvas>
+          <div class="controls">
+            <div class="control"><label for="s-tone"><span lang="en">Tone</span><span lang="zh-Hant">鼓皮音高</span></label><input type="range" id="s-tone" min="100" max="400" step="1" data-param="snare.tone" /><output for="s-tone"></output></div>
+            <div class="control"><label for="s-snap"><span lang="en">Snappy</span><span lang="zh-Hant">響弦量</span></label><input type="range" id="s-snap" min="0" max="100" step="1" data-param="snare.mix" /><output for="s-snap"></output></div>
+            <div class="control"><label for="s-dec"><span lang="en">Decay</span><span lang="zh-Hant">衰減</span></label><input type="range" id="s-dec" min="50" max="800" step="1" data-param="snare.decay" /><output for="s-dec"></output></div>
+          </div>
+        </div>
+
+        <div class="drum-card">
+          <div class="drum-head"><b><span lang="en">Hi-hat</span><span lang="zh-Hant">Hi-hat</span></b>
+            <span class="btn-pair">
+              <button class="btn primary" type="button" data-hit="chat"><span lang="en">Closed</span><span lang="zh-Hant">閉合</span></button>
+              <button class="btn primary" type="button" data-hit="ohat"><span lang="en">Open</span><span lang="zh-Hant">開放</span></button>
+            </span>
+          </div>
+          <canvas id="shot-hat" class="short" aria-label="Hi-hat waveform"></canvas>
+          <div class="controls">
+            <div class="control"><label for="h-bright"><span lang="en">Brightness</span><span lang="zh-Hant">亮度</span></label><input type="range" id="h-bright" min="3000" max="12000" step="10" data-param="hat.cutoff" /><output for="h-bright"></output></div>
+            <div class="control"><label for="h-closed"><span lang="en">Closed decay</span><span lang="zh-Hant">閉合衰減</span></label><input type="range" id="h-closed" min="20" max="200" step="1" data-param="hat.closed" /><output for="h-closed"></output></div>
+            <div class="control"><label for="h-open"><span lang="en">Open decay</span><span lang="zh-Hant">開放衰減</span></label><input type="range" id="h-open" min="150" max="1200" step="1" data-param="hat.open" /><output for="h-open"></output></div>
+          </div>
+        </div>
+      </div>
+      <p class="notice audio-unavailable" hidden style="margin:12px 0 0">
+        <span lang="en">Audio couldn't start in this browser. The drawings still work.</span>
+        <span lang="zh-Hant">這個瀏覽器無法啟動聲音，圖仍然可以正常操作。</span>
+      </p>
+    </section>
+
+    <p>
+      <span lang="en">Try the kick's <em>pitch drop</em>: very fast gives a tight, clicky electronic kick; slower turns it into a laser "pew". And on the snare, slide <em>snappy</em> all the way down — what's left sounds like a tom.</span>
+      <span lang="zh-Hant">試試 kick 的<em>音高下降</em>：非常快會得到緊實、有點「喀」聲的電子大鼓；慢一點就變成雷射槍的「咻」。把 snare 的<em>響弦量</em>拉到最低，剩下的聲音就像通鼓（tom）。</span>
+    </p>
+
+    <h2><span lang="en">Putting hits on a grid</span><span lang="zh-Hant">把打擊放到格子上</span></h2>
+    <p>
+      <span lang="en">Most music counts in bars of four beats. Split each beat into four and you get 16 <strong>steps</strong> per bar — the grid every drum machine and DAW step sequencer uses. <strong>BPM</strong> (beats per minute) sets how fast you move through it: at 120 BPM a beat lasts 0.5 s and a step lasts 0.125 s.</span>
+      <span lang="zh-Hant">大部分音樂以「一小節四拍」來數。把每一拍再切成四份，一小節就有 16 個<strong>步（step）</strong>，所有鼓機和 DAW 的步進音序器都用這個格子。<strong>BPM</strong>（每分鐘幾拍）決定走過格子的速度：120 BPM 時，一拍 0.5 秒，一步 0.125 秒。</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Program a beat</span><span lang="zh-Hant">編一段節奏</span></div>
+      <div class="btn-row" role="group" aria-label="Pattern presets" id="patterns" style="margin-top:0">
+        <button class="btn" type="button" data-pattern="house"><span lang="en">Four on the floor</span><span lang="zh-Hant">四拍大鼓（House）</span></button>
+        <button class="btn" type="button" data-pattern="boombap"><span lang="en">Boom bap</span><span lang="zh-Hant">Boom bap（嘻哈）</span></button>
+        <button class="btn" type="button" data-pattern="rock"><span lang="en">Rock</span><span lang="zh-Hant">搖滾</span></button>
+        <button class="btn" type="button" data-pattern="clear"><span lang="en">Clear</span><span lang="zh-Hant">清空</span></button>
+      </div>
+      <div class="seq" id="seq" role="grid" aria-label="Step sequencer"></div>
+      <div class="controls">
+        <div class="control">
+          <label for="bpm">BPM</label>
+          <input type="range" id="bpm" min="70" max="160" step="1" />
+          <output id="bpm-out" for="bpm"></output>
+        </div>
+        <div class="control">
+          <label for="swing">Swing</label>
+          <input type="range" id="swing" min="0" max="60" step="1" />
+          <output id="swing-out" for="swing"></output>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="seq-play" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Click squares to add or remove hits while it plays. The kit uses the sounds you built above. A closed hat cuts off a ringing open hat, just like a real hi-hat pedal (this is called a <strong>choke</strong>).</span>
+        <span lang="zh-Hant">播放時點格子就能加入或拿掉打擊，用的是你上面組好的鼓聲。閉合 hi-hat 會切掉正在響的開放 hi-hat，就像真的 hi-hat 踏板一樣（這叫做 <strong>choke</strong>）。</span>
+      </p>
+    </section>
+
+    <p>
+      <span lang="en">The three presets show the most common skeleton in pop music: <strong>kick</strong> on the strong beats, <strong>snare</strong> on beats 2 and 4 (the "backbeat"), and <strong>hats</strong> filling in between. Change only where the kicks land and the genre changes with it.</span>
+      <span lang="zh-Hant">三個預設展示了流行音樂最常見的骨架：<strong>kick</strong> 在重拍、<strong>snare</strong> 在第 2 和第 4 拍（所謂的「反拍」backbeat）、<strong>hi-hat</strong> 填在中間。光是改變 kick 落在哪裡，曲風就跟著變了。</span>
+    </p>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Swing: the human feel</span><span lang="zh-Hant">Swing：人味</span></div>
+      <p>
+        <span lang="en">A drummer never plays perfectly on the grid. <strong>Swing</strong> delays every second 16th note a little, turning straight "1-e-and-a" into a bouncing "lo-ng short lo-ng short". Turn it up on the boom bap pattern and hear it start to groove.</span>
+        <span lang="zh-Hant">鼓手從來不會打得跟格子一模一樣。<strong>Swing</strong> 會把每兩個 16 分音符中的第二個稍微往後延，讓平直的「噠噠噠噠」變成有彈性的「噠——噠、噠——噠」。在 boom bap 節奏上把它調高，聽聽律動感出來的感覺。</span>
+      </p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en">Open the step sequencer: FL Studio's <em>Channel Rack</em>, Ableton's <em>Drum Rack</em> with a MIDI clip, or Logic's <em>Step Sequencer</em>. Copy one of the patterns above.</span>
+          <span lang="zh-Hant">打開步進音序器：FL Studio 的 <em>Channel Rack</em>、Ableton 的 <em>Drum Rack</em> 加上一個 MIDI clip，或 Logic 的 <em>Step Sequencer</em>。照著上面的其中一個節奏輸入。</span>
+        </li>
+        <li>
+          <span lang="en">Find the swing (or groove) control and try 0%, 25% and 50%.</span>
+          <span lang="zh-Hant">找到 swing（或 groove）控制，試試 0%、25%、50%。</span>
+        </li>
+        <li>
+          <span lang="en">Make your own kick: any synth, sine wave, short amp decay, plus a pitch envelope that falls fast. In samplers, put open and closed hats in the same <em>choke group</em>.</span>
+          <span lang="zh-Hant">自己做一個 kick：任何合成器、正弦波、短的音量衰減，再加上一個快速下降的音高包絡。在取樣器裡，把開放和閉合 hi-hat 放進同一個 <em>choke group</em>。</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en">Kick = falling sine. Snare = tone + noise. Hi-hat = high-passed noise.</span><span lang="zh-Hant">Kick＝下降的正弦波。Snare＝音＋噪音。Hi-hat＝高通過的噪音。</span></li>
+      <li><span lang="en">A bar of 4/4 = 16 steps. BPM sets how long each step lasts.</span><span lang="zh-Hant">一小節 4/4 拍＝16 步。BPM 決定每一步多長。</span></li>
+      <li><span lang="en">Backbeat (snare on 2 and 4) is the backbone of pop; swing adds groove.</span><span lang="zh-Hant">反拍（snare 在第 2、4 拍）是流行音樂的骨幹；swing 帶來律動。</span></li>
+    </ul>
+
+    <p class="notice">
+      <span lang="en">Under the hood: <code>KickVoice</code>, <code>SnareVoice</code> and <code>HatVoice</code> in <code>cpp/src/DrumSynth.cpp</code>, ported to JavaScript. The loop is rendered sample by sample in your browser and then played back. Want the full drum machine? See <a href="https://github.com/bluedragonmy/drumforge">DrumForge</a>.</span>
+      <span lang="zh-Hant">技術細節：<code>cpp/src/DrumSynth.cpp</code> 裡的 <code>KickVoice</code>、<code>SnareVoice</code>、<code>HatVoice</code>，移植成 JavaScript。整段 loop 在你的瀏覽器裡逐個取樣算出來，再播放。想玩完整的鼓機？請看 <a href="https://github.com/bluedragonmy/drumforge">DrumForge</a>。</span>
+    </p>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="04-envelopes.html"><span lang="en">← The shape of a sound</span><span lang="zh-Hant">← 聲音的形狀</span></a>
+      <a href="06-mixing.html"><span lang="en">Next: Mixing basics →</span><span lang="zh-Hant">下一章：混音入門 →</span></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script type="module" src="../js/ch5.js"></script>
+</body>
+</html>

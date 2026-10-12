@@ -36,7 +36,7 @@ void DrumVoice::setVolume(double db)
 void DrumVoice::setPan(double panValue)
 {
     // Constant power panning
-    double p = (std::clamp(panValue, -1.0, 1.0) + 1.0) / 2.0; // 0.0 to 1.0
+    double p = (std::max(-1.0, std::min(panValue, 1.0)) + 1.0) / 2.0; // 0.0 to 1.0
     panLeft = std::cos(p * 1.57079632679); // PI/2
     panRight = std::sin(p * 1.57079632679);
 }
@@ -53,7 +53,7 @@ void DrumVoice::setEnvelope(double attack, double decay, double sustain, double 
 
 void DrumVoice::noteOn(double velocity)
 {
-    currentVelocity = std::clamp(velocity, 0.0, 1.0);
+    currentVelocity = std::max(0.0, std::min(velocity, 1.0));
     samplePosition = 0.0;
     envelope.noteOn();
 }

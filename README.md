@@ -9,14 +9,30 @@ Each chapter explains one idea, lets you hear and see it in the browser, and the
 | # | Chapter | Status |
 |---|---|---|
 | 01 | What is sound? (frequency, amplitude, dB) | ✅ |
-| 02 | Digital sound (sample rate, aliasing) | planned |
-| 03 | Timbre & harmonics (waveforms, filters) | planned |
-| 04 | The shape of a sound (ADSR) | planned |
-| 05 | Drums & rhythm | planned |
-| 06 | Mixing basics (levels, pan, EQ, masking) | planned |
-| 07 | Loudness (LUFS, normalization) | planned |
+| 02 | Digital sound (sample rate, aliasing) | ✅ |
+| 03 | Timbre & harmonics (waveforms, filters) | ✅ |
+| 04 | The shape of a sound (ADSR) | ✅ |
+| 05 | Drums & rhythm | ✅ |
+| 06 | Mixing basics (levels, pan, EQ, masking) | ✅ |
+| 07 | Loudness (LUFS, normalization) | ✅ |
 
-The audio is our own DSP rather than the browser's built-in nodes: chapter 1's tone runs in an AudioWorklet that ports [`cpp/src/Oscillator.cpp`](cpp/src/Oscillator.cpp) sample by sample.
+The audio is our own DSP rather than the browser's built-in nodes. DSP is written in C++ first (`cpp/`, with tests in `cpp/tests/`), then ported line for line to AudioWorklets in `site/js/`. The JS ports run the same test cases as the C++ originals:
+
+```sh
+sh cpp/tests/run_tests.sh                 # C++
+node site/js/dsp/aliasing.test.mjs        # JS ports
+node site/js/dsp/dsp.test.mjs
+```
+
+| DSP module (`cpp/src/`) | JS port (`site/js/`) | Used in |
+|---|---|---|
+| `Oscillator` | `audio/oscillator-processor.js` | ch1 |
+| `SampleRateReducer` | `dsp/aliasing.js` | ch2 |
+| `AdditiveOscillator` | `dsp/oscillators.js` | ch3–7 |
+| `LowPassFilter`, `Biquad` | `dsp/filters.js` | ch3, ch5–7 |
+| `ADSR` | `dsp/adsr.js` | ch4–7 |
+| `Noise`, `DrumSynth` | `dsp/noise.js`, `dsp/drums.js` | ch5–7 |
+| `LoudnessMeter` (ITU-R BS.1770 / EBU R128) | `dsp/loudness.js` | ch7 |
 
 ### Run locally
 

@@ -37,6 +37,7 @@ const Engine = (() => {
       try {
         await ctx.audioWorklet.addModule(moduleUrl('oscillator-processor.js'));
         await ctx.audioWorklet.addModule(moduleUrl('sample-rate-reducer-processor.js'));
+        await ctx.audioWorklet.addModule(moduleUrl('synth-processor.js'));
         workletReady = true;
       } catch (err) {
         console.warn('[engine] AudioWorklet unavailable, using OscillatorNode fallback:', err);
@@ -86,6 +87,42 @@ const Engine = (() => {
     };
   }
 
+  // One-voice synth (see synth-processor.js). Returns null without the worklet.
+  // onLevel(fn) receives { level, state } about 30 times per second.
+  function createSynth(params = {}) {
+    if (!workletReady) return null;
+    const node = new AudioWorkletNode(ctx, 'synth', { outputChannelCount: [2] });
+    node.connect(master);
+    const post = msg => node.port.postMessage(msg);
+    post({ type: 'params', ...params });
+    return {
+      set(p) { post({ type: 'params', ...p }); },
+      noteOn() { post({ type: 'noteOn' }); },
+      noteOff() { post({ type: 'noteOff' }); },
+      onLevel(fn) { node.port.onmessage = e => fn(e.data); },
+      stop() { node.disconnect(); },
+    };
+  }
+
+  // Play pre-rendered audio (Float32Arrays, one per channel) through the
+  // master. Chapters 5–7 render with our DSP in JS, then play the result.
+  // Returns { source, startedAt, duration, stop() }.
+  function playRendered(channels, { loop = false, offset = 0 } = {}) {
+    const buffer = ctx.createBuffer(channels.length, channels[0].length, ctx.sampleRate);
+    channels.forEach((data, i) => buffer.copyToChannel(data, i));
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = loop;
+    source.connect(master);
+    source.start(0, offset % buffer.duration);
+    return {
+      source,
+      startedAt: ctx.currentTime - (offset % buffer.duration),
+      duration: buffer.duration,
+      stop() { try { source.stop(); } catch (e) { /* already stopped */ } source.disconnect(); },
+    };
+  }
+
   // Glide a parameter to a new value without clicks.
   function glide(param, value) {
     param.setTargetAtTime(value, ctx.currentTime, SMOOTH);
@@ -104,7 +141,7 @@ const Engine = (() => {
   }
 
   return {
-    start, createSine, createSampleRateReducer, glide, playTone,
+    start, createSine, createSampleRateReducer, createSynth, playRendered, glide, playTone,
     get ctx() { return ctx; },
     get usingOwnDsp() { return workletReady; },
   };

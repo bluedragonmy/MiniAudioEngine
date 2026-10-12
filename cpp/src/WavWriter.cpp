@@ -32,8 +32,8 @@ void WavWriter::write(
     int16_t audioFormat = 1;  // PCM = 1
     file.write(reinterpret_cast<char*>(&subchunk1Size),  4);
     file.write(reinterpret_cast<char*>(&audioFormat),    2);
-    int16_t numChannels = NUM_CHANNELS;
-    file.write(reinterpret_cast<char*>(&numChannels),    2);
+    int16_t channels16 = NUM_CHANNELS;
+    file.write(reinterpret_cast<char*>(&channels16),     2);
     file.write(reinterpret_cast<char*>(&SAMPLE_RATE),    4);
     file.write(reinterpret_cast<char*>(&byteRate),       4);
     int16_t blockAlignS = blockAlign;

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Shape of a Sound · Sound Basics</title>
+  <meta name="description" content="Chapter 4: ADSR envelopes — how plucks, pads and everything between get their shape." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 4</span><span lang="zh-Hant">第 4 章</span></p>
+    <h1><span lang="en">The shape of a sound</span><span lang="zh-Hant">聲音的形狀</span></h1>
+    <p class="lede">
+      <span lang="en">Same oscillator, same filter — and yet one patch plucks like a harp while another swells like strings. The difference is how the volume moves over time.</span>
+      <span lang="zh-Hant">同一個振盪器、同一個濾波器，一個音色像豎琴一樣撥出來，另一個卻像弦樂一樣慢慢湧上來。差別在於音量隨時間怎麼變化。</span>
+    </p>
+
+    <h2><span lang="en">Four numbers: A, D, S, R</span><span lang="zh-Hant">四個數字：A、D、S、R</span></h2>
+    <p>
+      <span lang="en">Almost every synth and sampler shapes its volume with an <strong>envelope</strong> that has four stages:</span>
+      <span lang="zh-Hant">幾乎所有合成器和取樣器，都用一個有四個階段的<strong>包絡（envelope）</strong>來塑造音量：</span>
+    </p>
+    <ul>
+      <li><span lang="en"><strong>Attack</strong> — how long it takes to reach full volume after you press the key.</span><span lang="zh-Hant"><strong>Attack（起音）</strong>：按下琴鍵後，到達最大音量要多久。</span></li>
+      <li><span lang="en"><strong>Decay</strong> — how long it takes to fall from full volume to the sustain level.</span><span lang="zh-Hant"><strong>Decay（衰減）</strong>：從最大音量降到持續音量要多久。</span></li>
+      <li><span lang="en"><strong>Sustain</strong> — the volume it holds while you keep the key down. This one is a level, not a time.</span><span lang="zh-Hant"><strong>Sustain（持續）</strong>：按住琴鍵時保持的音量。注意這個是音量，不是時間。</span></li>
+      <li><span lang="en"><strong>Release</strong> — how long it takes to fade out after you let go.</span><span lang="zh-Hant"><strong>Release（釋放）</strong>：放開琴鍵後，淡出到無聲要多久。</span></li>
+    </ul>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title"><span lang="en">Try it: shape a note</span><span lang="zh-Hant">動手試：塑造一個音</span></div>
+      <canvas id="env" aria-label="The envelope shape: attack, decay, sustain while held, and release"></canvas>
+      <div class="readout" aria-live="off">
+        <span><span lang="en">Stage</span><span lang="zh-Hant">階段</span> <b id="r-stage">—</b></span>
+        <span><span lang="en">Level</span><span lang="zh-Hant">音量</span> <b id="r-level">0.00</b></span>
+      </div>
+      <div class="btn-row" role="group" aria-label="Presets" id="presets">
+        <button class="btn" type="button" data-preset="pluck"><span lang="en">Pluck</span><span lang="zh-Hant">撥弦</span></button>
+        <button class="btn" type="button" data-preset="pad"><span lang="en">Pad</span><span lang="zh-Hant">長音墊</span></button>
+        <button class="btn" type="button" data-preset="organ"><span lang="en">Organ</span><span lang="zh-Hant">風琴</span></button>
+        <button class="btn" type="button" data-preset="brass"><span lang="en">Brass stab</span><span lang="zh-Hant">銅管短音</span></button>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="atk">Attack</label>
+          <input type="range" id="atk" min="0" max="1000" step="1" />
+          <output id="atk-out" for="atk"></output>
+        </div>
+        <div class="control">
+          <label for="dec">Decay</label>
+          <input type="range" id="dec" min="0" max="1000" step="1" />
+          <output id="dec-out" for="dec"></output>
+        </div>
+        <div class="control">
+          <label for="sus">Sustain</label>
+          <input type="range" id="sus" min="0" max="100" step="1" />
+          <output id="sus-out" for="sus"></output>
+        </div>
+        <div class="control">
+          <label for="rel">Release</label>
+          <input type="range" id="rel" min="0" max="1000" step="1" />
+          <output id="rel-out" for="rel"></output>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary hold-btn" id="hold" type="button"><span lang="en">Hold to play</span><span lang="zh-Hant">按住播放</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Press and hold the button (or hold the space bar while it's focused). Let go to hear the release.</span>
+        <span lang="zh-Hant">按住按鈕不放（或在按鈕被選取時按住空白鍵），放開就會聽到 release。</span>
+      </p>
+      <p class="notice audio-unavailable" hidden style="margin:4px 0 0">
+        <span lang="en">Audio needs the page to be served over http:// (see the README).</span>
+        <span lang="zh-Hant">聲音需要透過 http:// 開啟網頁（見 README）。</span>
+      </p>
+    </section>
+
+    <p>
+      <span lang="en">Try the presets and look at their shapes. A <strong>pluck</strong> has no sustain at all — the sound dies away even if you keep holding. A <strong>pad</strong> fades in slowly and lingers after you let go. An <strong>organ</strong> is a plain on/off switch.</span>
+      <span lang="zh-Hant">試試看預設，比較它們的形狀。<strong>撥弦</strong>完全沒有 sustain，就算一直按著，聲音也會自己消失。<strong>長音墊</strong>慢慢淡入，放開後還會留一陣子。<strong>風琴</strong>就是單純的開和關。</span>
+    </p>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Why "Attack = 0" can click</span><span lang="zh-Hant">為什麼「Attack = 0」會有爆音</span></div>
+      <p>
+        <span lang="en">Set attack and release to zero and play the organ a few times. Hear the small click at the start and end? The volume jumps instantly, and a sudden jump in a waveform contains energy at every frequency. That's why even "instant" envelopes in good synths take a few milliseconds.</span>
+        <span lang="zh-Hant">把 attack 和 release 都調到 0，用風琴音色彈幾次。有沒有聽到開頭和結尾的小小「喀」聲？音量瞬間跳變，而波形上突然的跳變包含了所有頻率的能量。所以好的合成器裡，就算是「瞬間」的包絡，也會花上幾毫秒。</span>
+      </p>
+    </div>
+
+    <h2><span lang="en">Train your ears</span><span lang="zh-Hant">練練耳朵</span></h2>
+    <p>
+      <span lang="en">You'll hear one note held for about a second, then released. Which preset made it?</span>
+      <span lang="zh-Hant">你會聽到一個音按住大約一秒後放開。它是哪一個預設？</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Which envelope?</span><span lang="zh-Hant">哪一個包絡？</span></div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn primary" id="quiz-play" type="button"><span lang="en">▶ Play a note</span><span lang="zh-Hant">▶ 播放一個音</span></button>
+      </div>
+      <div class="quiz-options" id="quiz-options">
+        <button class="btn" type="button" data-answer="pluck"><span lang="en">Pluck</span><span lang="zh-Hant">撥弦</span></button>
+        <button class="btn" type="button" data-answer="pad"><span lang="en">Pad</span><span lang="zh-Hant">長音墊</span></button>
+        <button class="btn" type="button" data-answer="organ"><span lang="en">Organ</span><span lang="zh-Hant">風琴</span></button>
+        <button class="btn" type="button" data-answer="brass"><span lang="en">Brass stab</span><span lang="zh-Hant">銅管短音</span></button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
+    </section>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Envelopes are everywhere</span><span lang="zh-Hant">包絡無所不在</span></div>
+      <p>
+        <span lang="en">Here the envelope controls volume, but synths let you point an envelope at almost anything. An envelope on the <strong>filter cutoff</strong> (chapter 3) makes the sound bright at the start and darker as it decays — that's how most synth basses and plucks get their "bite". In mixing, a compressor's <em>attack</em> and <em>release</em> knobs use the very same idea.</span>
+        <span lang="zh-Hant">這裡的包絡控制的是音量，但合成器幾乎可以把包絡接到任何參數上。把包絡接到<strong>濾波器截止頻率</strong>（第 3 章），聲音會在一開始很亮、隨著衰減變暗，大部分合成器貝斯和撥弦音的「咬勁」就是這樣來的。混音時，壓縮器的 <em>attack</em> 和 <em>release</em> 旋鈕也是同樣的概念。</span>
+      </p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en">Open a synth and find the <em>Amp</em> (or <em>Volume</em>) envelope. In Ableton <em>Analog</em> it's under <em>Amp</em>; in FL Studio <em>3x Osc</em>, open the channel's <em>Envelope/Instrument</em> tab and enable the volume envelope; in Logic <em>Retro Synth</em> it's the <em>Amp</em> envelope at the bottom.</span>
+          <span lang="zh-Hant">開一個合成器，找到 <em>Amp</em>（或 <em>Volume</em>）包絡。Ableton <em>Analog</em> 在 <em>Amp</em> 區；FL Studio <em>3x Osc</em> 要打開通道的 <em>Envelope/Instrument</em> 分頁，啟用音量包絡；Logic <em>Retro Synth</em> 在底部的 <em>Amp</em> 包絡。</span>
+        </li>
+        <li>
+          <span lang="en">Recreate the four presets from this page with the same saw oscillator. Play a chord with each one.</span>
+          <span lang="zh-Hant">用同一個鋸齒波振盪器，做出這一頁的四個預設，每一個都彈一個和弦聽聽看。</span>
+        </li>
+        <li>
+          <span lang="en">Load a drum sample into a sampler (Ableton: <em>Simpler</em>, FL Studio: <em>Sampler</em>, Logic: <em>Quick Sampler</em>) and shorten its decay to make the hit tighter.</span>
+          <span lang="zh-Hant">把一個鼓取樣載入取樣器（Ableton：<em>Simpler</em>，FL Studio：<em>Sampler</em>，Logic：<em>Quick Sampler</em>），把 decay 縮短，讓打擊聲更緊實。</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en"><strong>ADSR</strong>: three times (attack, decay, release) and one level (sustain).</span><span lang="zh-Hant"><strong>ADSR</strong>：三個時間（attack、decay、release）和一個音量（sustain）。</span></li>
+      <li><span lang="en">Short attack + no sustain = pluck. Long attack + long release = pad.</span><span lang="zh-Hant">短 attack＋沒有 sustain＝撥弦。長 attack＋長 release＝長音墊。</span></li>
+      <li><span lang="en">Instant volume changes click; give them a few milliseconds.</span><span lang="zh-Hant">音量瞬間變化會有爆音，給它幾毫秒的時間。</span></li>
+    </ul>
+
+    <p class="notice">
+      <span lang="en">Under the hood: <code>cpp/src/ADSR.cpp</code>, ported line for line to JavaScript, driving the synth from chapter 3.</span>
+      <span lang="zh-Hant">技術細節：<code>cpp/src/ADSR.cpp</code>，逐行移植成 JavaScript，驅動第 3 章的合成器。</span>
+    </p>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="03-timbre.html"><span lang="en">← Timbre &amp; harmonics</span><span lang="zh-Hant">← 音色與泛音</span></a>
+      <a href="05-drums.html"><span lang="en">Next: Drums &amp; rhythm →</span><span lang="zh-Hant">下一章：鼓與節奏 →</span></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script type="module" src="../js/ch4.js"></script>
+</body>
+</html>

@@ -136,6 +136,8 @@ a.chapter-card:hover { border-color: var(--accent); }
   display: block; width: 100%; height: 180px;
   background: var(--surface-2); border-radius: 8px;
 }
+.demo canvas.spectrum { height: 150px; margin-top: 8px; }
+.demo canvas.short { height: 130px; }
 .readout {
   display: flex; flex-wrap: wrap; gap: 8px 20px;
   margin: 12px 0 4px; font-family: var(--mono); font-size: 14px; color: var(--muted);
@@ -157,6 +159,59 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .btn:hover { border-color: var(--accent); }
 .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 6px; }
+.swatch { display: inline-block; width: 18px; height: 0; border-top: 2px solid; margin-left: 8px; }
+.swatch:first-child { margin-left: 0; }
+.swatch-real  { border-color: var(--muted); opacity: 0.6; }
+.swatch-held  { border-color: var(--accent); }
+.swatch-heard { border-color: var(--good); border-top-style: dashed; }
+
+.hold-btn { padding: 14px 28px; user-select: none; -webkit-user-select: none; touch-action: none; }
+.hold-btn[aria-pressed="true"] { transform: scale(0.97); filter: brightness(1.12); }
+
+/* ── Drum kit cards (ch5) ───────────────────────────────────────────────── */
+.drum-grid { display: grid; gap: 14px; }
+.drum-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--bg); }
+.drum-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.drum-head .btn { padding: 4px 12px; }
+.btn-pair { display: flex; gap: 6px; }
+.drum-card .controls { margin-top: 10px; gap: 10px; }
+
+/* ── Step sequencer (ch5) ───────────────────────────────────────────────── */
+.seq { display: grid; gap: 6px; margin-top: 14px; overflow-x: auto; padding-bottom: 4px; }
+.seq-row { display: grid; grid-template-columns: 72px repeat(16, minmax(16px, 1fr)); gap: 3px; align-items: center; min-width: 380px; }
+.seq-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.seq-cell {
+  aspect-ratio: 1; min-height: 16px; border-radius: 4px; cursor: pointer; padding: 0;
+  border: 1px solid var(--border); background: var(--surface-2);
+}
+.seq-cell.beat { border-color: color-mix(in srgb, var(--muted) 45%, var(--border)); }
+.seq-cell[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); }
+.seq-cell.now { outline: 2px solid var(--good); outline-offset: 1px; }
+
+/* ── Mixer (ch6) ────────────────────────────────────────────────────────── */
+.mixer { display: grid; gap: 12px; }
+.strip { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
+.strip-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 600; margin-bottom: 6px; }
+.strip .controls { margin-top: 4px; gap: 8px; }
+.meter { height: 10px; border-radius: 5px; background: var(--surface-2); overflow: hidden; position: relative; }
+.meter > span { position: absolute; inset: 0 auto 0 0; background: var(--good); width: 0; }
+.meter.hot > span { background: var(--accent); }
+.toggle-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+/* ── Loudness table (ch7) ───────────────────────────────────────────────── */
+.loud-table { display: grid; gap: 8px; }
+.loud-row { display: grid; grid-template-columns: 40px minmax(0, 1.3fr) 92px minmax(0, 1.4fr); gap: 10px; align-items: center; font-size: 15px; }
+.loud-row .btn { padding: 4px 0; }
+.loud-head { font-size: 13px; color: var(--muted); font-weight: 600; }
+.loud-bar { position: relative; height: 22px; border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+.loud-bar > span { position: absolute; inset: 0 auto 0 0; background: var(--accent); opacity: 0.85; }
+.loud-bar > b { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 13px; }
+@media (max-width: 520px) {
+  .loud-row { grid-template-columns: 36px 1fr 1fr; }
+  .loud-row > :nth-child(3) { display: none; }
+}
 
 /* ── Callouts ────────────────────────────────────────────────────────────── */
 .callout {

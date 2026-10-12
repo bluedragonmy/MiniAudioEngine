@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mixing Basics · Sound Basics</title>
+  <meta name="description" content="Chapter 6: levels, panning, clipping, why your kick and bass are fighting, and what phase does to layered sounds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 6</span><span lang="zh-Hant">第 6 章</span></p>
+    <h1><span lang="en">Mixing basics</span><span lang="zh-Hant">混音入門</span></h1>
+    <p class="lede">
+      <span lang="en">Mixing is making every part of a track audible at once. Most beginner mixes don't fail because of a missing plugin — they fail on levels, on two sounds fighting for the same space, or on phase.</span>
+      <span lang="zh-Hant">混音就是讓每個聲部能同時被聽清楚。大部分新手的混音出問題，不是因為少了哪個外掛，而是音量、兩個聲音搶同一塊空間，或是相位。</span>
+    </p>
+
+    <h2><span lang="en">Levels, panning and the 0 dB ceiling</span><span lang="zh-Hant">音量、聲像與 0 dB 天花板</span></h2>
+    <p>
+      <span lang="en">Every track goes through a <strong>fader</strong> (its level, in dB) and a <strong>pan</strong> knob (where it sits between left and right), then everything adds up on the <strong>master</strong>. Remember chapter 1: the master can't go above 0 dBFS. When tracks pile up past that, the peaks get chopped off — <strong>clipping</strong>.</span>
+      <span lang="zh-Hant">每一軌都會經過<strong>推桿</strong>（音量，單位 dB）和<strong>聲像（pan）</strong>旋鈕（放在左右之間的哪裡），最後全部加總到 <strong>master</strong>。還記得第 1 章嗎？master 不能超過 0 dBFS。各軌疊起來超過的時候，波峰就會被削掉，這就是<strong>削波（clipping）</strong>。</span>
+    </p>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title"><span lang="en">Try it: a four-track mixer</span><span lang="zh-Hant">動手試：四軌混音台</span></div>
+      <div class="mixer" id="mixer"></div>
+      <div class="strip" style="margin-top:12px">
+        <div class="strip-head"><span>Master</span><span class="mono" id="master-peak">—</span></div>
+        <div class="meter" id="meter-l"><span></span></div>
+        <div class="meter" id="meter-r" style="margin-top:4px"><span></span></div>
+        <p class="notice" id="clip-note" style="margin:8px 0 0"></p>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play1" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+        <button class="btn" id="reset1" type="button"><span lang="en">Reset</span><span lang="zh-Hant">重設</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Push every fader up to +6 dB and listen to the master: the crunch is clipping. Then pull everything back down — a mix sounds just as good quieter, you simply turn up your speakers.</span>
+        <span lang="zh-Hant">把每個推桿都推到 +6 dB，聽聽 master：那種破掉的沙沙聲就是削波。再把全部拉回來，混音小聲一點聽起來一樣好，把喇叭開大聲就行了。</span>
+      </p>
+    </section>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Gain staging, in one sentence</span><span lang="zh-Hant">Gain staging，一句話講完</span></div>
+      <p>
+        <span lang="en">Leave room: aim for master peaks around −6 dBFS while mixing, and if everything is too loud, pull the faders down instead of reaching for a limiter. Loudness comes later, in chapter 7.</span>
+        <span lang="zh-Hant">留點空間：混音時讓 master 峰值大約在 −6 dBFS，如果全部都太大聲，就把推桿拉下來，而不是直接加一個 limiter。響度是第 7 章的事。</span>
+      </p>
+    </div>
+
+    <h2><span lang="en">Why your kick and bass are fighting</span><span lang="zh-Hant">為什麼你的 kick 和 bass 在打架</span></h2>
+    <p>
+      <span lang="en">This is the most common beginner complaint: the low end is "muddy" and the kick disappears. The reason is <strong>masking</strong>. The kick's boom and the bass note both live around 40–100 Hz. When two sounds share a frequency range, the louder one hides the quieter one, and together they blur.</span>
+      <span lang="zh-Hant">這是新手最常見的抱怨：低頻「糊糊的」，kick 不見了。原因是<strong>遮蔽（masking）</strong>。kick 的低音和 bass 的音符都在 40–100 Hz 附近。兩個聲音佔用同一個頻段時，大聲的會蓋住小聲的，混在一起就糊掉了。</span>
+    </p>
+    <p>
+      <span lang="en">There are two classic fixes. <strong>EQ carving</strong> turns the bass down a little right where the kick lives. <strong>Sidechain ducking</strong> turns the bass down for a split second every time the kick hits, using the kick's own envelope. Try each on its own, then both.</span>
+      <span lang="zh-Hant">有兩種經典解法。<strong>EQ 挖空</strong>：在 kick 所在的頻率，把 bass 調小一點。<strong>Sidechain 閃避（ducking）</strong>：每次 kick 打下去的瞬間，用 kick 自己的包絡把 bass 壓低一下。分別試試看，再兩個一起開。</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Kick vs bass</span><span lang="zh-Hant">Kick 對上 bass</span></div>
+      <canvas id="lowend" aria-label="Levels of kick and bass over one beat"></canvas>
+      <div class="legend notice">
+        <span class="swatch swatch-held"></span><span lang="en">kick</span><span lang="zh-Hant">kick</span>
+        <span class="swatch swatch-heard" style="border-top-style:solid"></span><span lang="en">bass</span><span lang="zh-Hant">bass</span>
+      </div>
+      <div class="toggle-row">
+        <button class="btn" type="button" id="t-eq" aria-pressed="false"><span lang="en">EQ carve: −9 dB at 55 Hz on bass</span><span lang="zh-Hant">EQ 挖空：bass 在 55 Hz −9 dB</span></button>
+        <button class="btn" type="button" id="t-duck" aria-pressed="false"><span lang="en">Sidechain duck</span><span lang="zh-Hant">Sidechain 閃避</span></button>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play2" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Small speakers and laptop speakers can't play 55 Hz. Use headphones for this one.</span>
+        <span lang="zh-Hant">小喇叭和筆電喇叭播不出 55 Hz，這一段請戴耳機。</span>
+      </p>
+    </section>
+
+    <h2><span lang="en">Phase: when two kicks make less than one</span><span lang="zh-Hant">相位：兩個 kick 加起來比一個還小</span></h2>
+    <p>
+      <span lang="en">Layering two kicks to make a bigger one sounds like a good idea. But sound is pressure going up and down: if one kick is pushing while the other is pulling, they cancel. A tiny delay between them (a few milliseconds), or one being upside down (<strong>polarity</strong> flipped), can make the layer <em>thinner</em> than either kick alone.</span>
+      <span lang="zh-Hant">把兩個 kick 疊起來做出更大的 kick，聽起來是好主意。但聲音是壓力的上上下下：如果一個在推、另一個在拉，它們就會互相抵消。兩者之間差了一點點時間（幾毫秒），或其中一個上下顛倒（<strong>極性</strong>反轉），疊出來的聲音反而會比單一個 kick <em>更薄</em>。</span>
+    </p>
+
+    <!-- Demo 3 -->
+    <section class="demo" aria-labelledby="demo3-title">
+      <div class="demo-title" id="demo3-title"><span lang="en">Layer two kicks</span><span lang="zh-Hant">疊兩個 kick</span></div>
+      <canvas id="phase" aria-label="Waveforms of kick A, kick B and their sum"></canvas>
+      <div class="legend notice">
+        <span class="swatch swatch-real"></span><span lang="en">kick A</span><span lang="zh-Hant">kick A</span>
+        <span class="swatch swatch-heard"></span><span lang="en">kick B</span><span lang="zh-Hant">kick B</span>
+        <span class="swatch swatch-held"></span><span lang="en">A + B (what you hear)</span><span lang="zh-Hant">A + B（實際聽到）</span>
+      </div>
+      <div class="readout" aria-live="polite">
+        <span><span lang="en">Layer vs one kick</span><span lang="zh-Hant">疊加後比單一 kick</span> <b id="r-layer"></b></span>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="delay"><span lang="en">Delay B</span><span lang="zh-Hant">B 的延遲</span></label>
+          <input type="range" id="delay" min="0" max="200" step="1" />
+          <output id="delay-out" for="delay"></output>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <button class="btn" type="button" id="t-flip" aria-pressed="false"><span lang="en">Flip polarity of B</span><span lang="zh-Hant">反轉 B 的極性</span></button>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play3" type="button"><span lang="en">▶ Play A + B</span><span lang="zh-Hant">▶ 播放 A + B</span></button>
+        <button class="btn" id="play3a" type="button"><span lang="en">▶ Play A alone</span><span lang="zh-Hant">▶ 只播 A</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Flip the polarity with no delay and the two kicks cancel completely: silence. Then try delays around 5–10 ms.</span>
+        <span lang="zh-Hant">不延遲、直接反轉極性，兩個 kick 會完全抵消：一片安靜。然後試試 5–10 毫秒左右的延遲。</span>
+      </p>
+    </section>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en"><strong>Gain staging:</strong> play your loudest section and watch the master meter. If it hits red, select all tracks and pull the faders down together.</span>
+          <span lang="zh-Hant"><strong>Gain staging：</strong>播放最大聲的段落，看 master 音量表。如果亮紅燈，全選所有軌道，一起把推桿拉下來。</span>
+        </li>
+        <li>
+          <span lang="en"><strong>Sidechain:</strong> put a compressor on the bass and feed it the kick (Ableton: <em>Compressor</em> → <em>Sidechain</em>; Logic: <em>Compressor</em> → <em>Side Chain</em> menu; FL Studio: <em>Fruity Limiter</em> in <em>COMP</em> mode with the kick's mixer track routed to it as sidechain).</span>
+          <span lang="zh-Hant"><strong>Sidechain：</strong>在 bass 上加壓縮器，讓 kick 觸發它（Ableton：<em>Compressor</em> → <em>Sidechain</em>；Logic：<em>Compressor</em> → <em>Side Chain</em> 選單；FL Studio：<em>Fruity Limiter</em> 切到 <em>COMP</em> 模式，把 kick 的混音軌以 sidechain 方式送過去）。</span>
+        </li>
+        <li>
+          <span lang="en"><strong>Phase:</strong> when you layer two kicks or record one source with two mics, flip the polarity of one (Ableton: <em>Utility</em> → <em>Phz</em>; Logic: <em>Gain</em> plugin → <em>Phase Invert</em>; FL Studio: the mixer track's <em>polarity</em> button) and keep whichever sounds fuller.</span>
+          <span lang="zh-Hant"><strong>相位：</strong>疊兩個 kick，或用兩支麥克風錄同一個聲源時，把其中一個的極性反轉（Ableton：<em>Utility</em> → <em>Phz</em>；Logic：<em>Gain</em> 外掛 → <em>Phase Invert</em>；FL Studio：混音軌上的<em>極性</em>按鈕），留下聽起來比較飽滿的那個。</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en">Tracks add up on the master; past 0 dBFS they clip. Mix with headroom.</span><span lang="zh-Hant">各軌在 master 加總，超過 0 dBFS 就會削波。混音時要留餘裕（headroom）。</span></li>
+      <li><span lang="en">Muddy low end is usually <strong>masking</strong>: carve with EQ or duck with sidechain.</span><span lang="zh-Hant">低頻糊掉通常是<strong>遮蔽</strong>：用 EQ 挖空，或用 sidechain 閃避。</span></li>
+      <li><span lang="en">Layers can cancel. Check <strong>polarity</strong> and timing whenever you stack similar sounds.</span><span lang="zh-Hant">疊加可能互相抵消。疊類似的聲音時，記得檢查<strong>極性</strong>和時間差。</span></li>
+    </ul>
+
+    <p class="notice">
+      <span lang="en">Under the hood: the loop is rendered with <code>DrumSynth</code>, <code>AdditiveOscillator</code>, <code>Biquad</code> (the 55 Hz cut is a peaking EQ) and <code>ADSR</code>; panning uses the constant-power law from <code>DrumVoice.cpp</code>. The sidechain is a simple envelope follower on the kick.</span>
+      <span lang="zh-Hant">技術細節：loop 由 <code>DrumSynth</code>、<code>AdditiveOscillator</code>、<code>Biquad</code>（55 Hz 的挖空是一個 peaking EQ）和 <code>ADSR</code> 算出來；聲像使用 <code>DrumVoice.cpp</code> 裡的等功率定律。sidechain 是對 kick 做的簡單包絡追蹤。</span>
+    </p>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="05-drums.html"><span lang="en">← Drums &amp; rhythm</span><span lang="zh-Hant">← 鼓與節奏</span></a>
+      <a href="07-loudness.html"><span lang="en">Next: Loudness →</span><span lang="zh-Hant">下一章：響度 →</span></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script type="module" src="../js/ch6.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Sound · Sound Basics</title>
+  <meta name="description" content="Chapter 2: sample rate, the Nyquist limit, and what aliasing sounds like." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 2</span><span lang="zh-Hant">第 2 章</span></p>
+    <h1><span lang="en">Digital sound</span><span lang="zh-Hant">數位聲音</span></h1>
+    <p class="lede">
+      <span lang="en">Your DAW never stores a wave — only snapshots of it. Take too few snapshots and high notes don't disappear: they come back as the wrong notes.</span>
+      <span lang="zh-Hant">DAW 從來不會儲存一整條波，只會存它的「快照」。快照拍得太少，高音不會消失，而是變成錯誤的音跑回來。</span>
+    </p>
+
+    <h2><span lang="en">Snapshots of a wave</span><span lang="zh-Hant">波的快照</span></h2>
+    <p>
+      <span lang="en">A computer can't store a smooth curve. Instead it measures the wave thousands of times per second and stores each measurement as a number — a <strong>sample</strong>. How many samples per second is the <strong>sample rate</strong>. CD audio uses 44,100 samples per second (44.1 kHz); video and most DAW projects use 48 kHz.</span>
+      <span lang="zh-Hant">電腦沒辦法儲存一條平滑的曲線。它的做法是每秒量測波形好幾千次，把每次量到的值存成一個數字，這叫做一個<strong>取樣（sample）</strong>。每秒取樣幾次，就是<strong>取樣率</strong>。CD 用的是每秒 44,100 次（44.1 kHz），影片和大部分 DAW 專案用 48 kHz。</span>
+    </p>
+    <p>
+      <span lang="en">Below, the faint curve is the "real" wave, the dots are the samples, and the steps show what the computer holds between them. Lower the sample rate and watch the dots spread out.</span>
+      <span lang="zh-Hant">下面的淡色曲線是「真實」的波，圓點是取樣點，階梯是電腦在兩個取樣點之間保留的值。把取樣率調低，看看圓點如何變稀疏。</span>
+    </p>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title"><span lang="en">Try it: sample a wave</span><span lang="zh-Hant">動手試：替波取樣</span></div>
+      <canvas id="sampled" aria-label="A sine wave, its samples, and the wave you actually hear, 5 milliseconds wide"></canvas>
+      <div class="readout" aria-live="polite">
+        <span><span lang="en">Nyquist</span><span lang="zh-Hant">Nyquist 頻率</span> <b id="r-nyq"></b></span>
+        <span><span lang="en">You hear</span><span lang="zh-Hant">實際聽到</span> <b id="r-heard"></b></span>
+        <span><b id="r-status"></b></span>
+      </div>
+      <div class="legend notice">
+        <span class="swatch swatch-real"></span><span lang="en">original</span><span lang="zh-Hant">原始的波</span>
+        <span class="swatch swatch-held"></span><span lang="en">samples (held)</span><span lang="zh-Hant">取樣（保持）</span>
+        <span class="swatch swatch-heard"></span><span lang="en">what you hear</span><span lang="zh-Hant">實際聽到的波</span>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="freq"><span lang="en">Frequency</span><span lang="zh-Hant">頻率</span></label>
+          <input type="range" id="freq" min="0" max="1000" step="1" />
+          <output id="freq-out" for="freq"></output>
+        </div>
+        <div class="control">
+          <label for="rate"><span lang="en">Sample rate</span><span lang="zh-Hant">取樣率</span></label>
+          <input type="range" id="rate" min="0" max="6" step="1" />
+          <output id="rate-out" for="rate"></output>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice audio-unavailable" hidden style="margin:12px 0 0">
+        <span lang="en">Audio for this chapter needs the page to be served over http:// (see the README). The drawings still work.</span>
+        <span lang="zh-Hant">這一章的聲音需要透過 http:// 開啟網頁（見 README）。圖仍然可以正常操作。</span>
+      </p>
+    </section>
+
+    <h2><span lang="en">The Nyquist limit</span><span lang="zh-Hant">Nyquist 上限</span></h2>
+    <p>
+      <span lang="en">To capture a wave you need at least two samples per cycle — one for the peak and one for the trough. So a sample rate can only hold frequencies up to <strong>half</strong> of itself. That ceiling is called the <strong>Nyquist frequency</strong>. At 44.1 kHz it's 22.05 kHz, just above the top of human hearing — which is why audio sample rates start around 44 kHz.</span>
+      <span lang="zh-Hant">要記錄一個波，每個週期至少需要兩個取樣點：一個在波峰，一個在波谷。所以一個取樣率最多只能記錄到它自己<strong>一半</strong>的頻率，這個上限叫做 <strong>Nyquist 頻率</strong>。44.1 kHz 的 Nyquist 是 22.05 kHz，剛好高於人耳的上限，這也是音訊取樣率大多從 44 kHz 左右起跳的原因。</span>
+    </p>
+
+    <h2><span lang="en">Aliasing: notes that fold back</span><span lang="zh-Hant">Aliasing：折回來的音</span></h2>
+    <p>
+      <span lang="en">What happens to a frequency above Nyquist? It doesn't vanish. The samples line up with a <em>lower</em> wave instead — the dashed line above passes through exactly the same dots. Your ear can't tell the difference, so you hear the low one. This impostor is called an <strong>alias</strong>.</span>
+      <span lang="zh-Hant">超過 Nyquist 的頻率會怎樣？它不會消失。那些取樣點會剛好落在一條<em>比較低</em>的波上，上面那條虛線就穿過完全相同的點。耳朵分不出差別，所以你聽到的是那個低的音。這個冒牌貨就叫做 <strong>alias（混疊）</strong>。</span>
+    </p>
+    <p>
+      <span lang="en">The alias isn't random. Frequencies fold back at Nyquist like a mirror: at 8 kHz sample rate, 5 kHz comes back as 3 kHz, 7 kHz as 1 kHz. Sweep a tone upward and, past Nyquist, its pitch goes <em>down</em>.</span>
+      <span lang="zh-Hant">alias 不是隨機的。頻率在 Nyquist 像照鏡子一樣折回來：取樣率 8 kHz 時，5 kHz 會變成 3 kHz，7 kHz 會變成 1 kHz。把一個音往上掃，超過 Nyquist 之後，音高反而會<em>往下掉</em>。</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Hear the fold (sample rate 8 kHz)</span><span lang="zh-Hant">聽聽折返（取樣率 8 kHz）</span></div>
+      <canvas id="fold" aria-label="Chart of played frequency versus heard frequency, folding at 4 kHz"></canvas>
+      <div class="readout" aria-live="off">
+        <span><span lang="en">Playing</span><span lang="zh-Hant">播放頻率</span> <b id="r-sweep-in">—</b></span>
+        <span><span lang="en">You hear</span><span lang="zh-Hant">實際聽到</span> <b id="r-sweep-out">—</b></span>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="sweep" type="button" aria-pressed="false"><span lang="en">▶ Sweep 100 Hz → 12 kHz</span><span lang="zh-Hant">▶ 從 100 Hz 掃到 12 kHz</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">The tone keeps rising the whole time. Listen for the moment at 4 kHz when it turns around.</span>
+        <span lang="zh-Hant">播放的頻率從頭到尾一直在升高。注意聽它在 4 kHz 掉頭往下的那一刻。</span>
+      </p>
+    </section>
+
+    <h2><span lang="en">Predict the alias</span><span lang="zh-Hant">預測 alias</span></h2>
+    <p>
+      <span lang="en">The sample rate is 8 kHz. Which frequency will you actually hear? Pick one, then listen to check.</span>
+      <span lang="zh-Hant">取樣率是 8 kHz，你實際會聽到哪個頻率？先選一個，再聽聽看對不對。</span>
+    </p>
+
+    <!-- Demo 3 -->
+    <section class="demo" aria-labelledby="demo3-title">
+      <div class="demo-title" id="demo3-title">
+        <span lang="en">Playing</span><span lang="zh-Hant">播放</span>&nbsp;<span class="mono" id="quiz-freq"></span>
+      </div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
+      <div class="btn-row">
+        <button class="btn" id="quiz-listen" type="button"><span lang="en">▶ Listen</span><span lang="zh-Hant">▶ 聽聽看</span></button>
+        <button class="btn" id="quiz-next" type="button"><span lang="en">Next question →</span><span lang="zh-Hant">下一題 →</span></button>
+      </div>
+    </section>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Where you'll meet aliasing in a real project</span><span lang="zh-Hant">在真實專案裡，你會在哪裡遇到 aliasing</span></div>
+      <p>
+        <span lang="en">Your audio interface filters out everything above Nyquist before sampling, so recordings are safe. The trouble starts <em>inside</em> the DAW: distortion, saturation and clipping create new high harmonics, and the ones above Nyquist fold back as harsh, out-of-tune noise. That's what the <strong>oversampling</strong> switch on many plugins is for — it runs the effect at a higher sample rate, filters, and comes back down.</span>
+        <span lang="zh-Hant">錄音介面在取樣前會先把 Nyquist 以上的頻率濾掉，所以錄進來的聲音是安全的。問題出在 DAW <em>裡面</em>：失真、飽和、削波會產生新的高頻泛音，超過 Nyquist 的部分會折回來，變成刺耳、不在調上的雜音。許多外掛上的 <strong>oversampling（超取樣）</strong>開關就是為此而設計：先在更高的取樣率處理效果，濾波之後再降回來。</span>
+      </p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en">Find your project's sample rate (Ableton: <em>Preferences → Audio</em>, FL Studio: <em>Options → Audio settings</em>, Logic: <em>Project Settings → Audio</em>). It's probably 44.1 or 48 kHz.</span>
+          <span lang="zh-Hant">找到你專案的取樣率（Ableton：<em>Preferences → Audio</em>，FL Studio：<em>Options → Audio settings</em>，Logic：<em>Project Settings → Audio</em>），大概是 44.1 或 48 kHz。</span>
+        </li>
+        <li>
+          <span lang="en">Put a downsampling effect on a synth or drum loop (Ableton: <em>Redux</em>, Logic: <em>Bitcrusher</em>, or any free bitcrusher plugin with a sample-rate control) and lower the rate slowly. The metallic, out-of-tune tones you hear are aliases.</span>
+          <span lang="zh-Hant">在合成器或鼓 loop 上加一個降取樣效果器（Ableton：<em>Redux</em>，Logic：<em>Bitcrusher</em>，或任何有取樣率旋鈕的免費 bitcrusher 外掛），慢慢把取樣率調低。你聽到那些金屬感、走音的聲音，就是 alias。</span>
+        </li>
+        <li>
+          <span lang="en">Next time you load a distortion or saturator, look for an oversampling option. Push the drive hard and compare it on and off.</span>
+          <span lang="zh-Hant">下次載入失真或飽和外掛時，找找看有沒有 oversampling 選項。把 drive 推大，比較開和關的差別。</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en">Digital audio is a list of <strong>samples</strong>; the <strong>sample rate</strong> is how many per second.</span><span lang="zh-Hant">數位音訊是一串<strong>取樣</strong>；<strong>取樣率</strong>是每秒取樣幾次。</span></li>
+      <li><span lang="en">A sample rate can only hold frequencies up to half of itself: the <strong>Nyquist frequency</strong>.</span><span lang="zh-Hant">取樣率最多只能記錄它一半以下的頻率，這叫做 <strong>Nyquist 頻率</strong>。</span></li>
+      <li><span lang="en">Anything above Nyquist folds back as an <strong>alias</strong>. In a mix, that's usually distortion without oversampling.</span><span lang="zh-Hant">超過 Nyquist 的頻率會折回來，變成 <strong>alias</strong>。在混音裡，最常見的來源是沒開 oversampling 的失真效果。</span></li>
+    </ul>
+
+    <p class="notice">
+      <span lang="en">Under the hood: the sample-and-hold effect here is <code>SampleRateReducer</code>, written in C++ (<code>cpp/src/SampleRateReducer.cpp</code>) and ported line for line to an AudioWorklet. Both versions pass the same test cases.</span>
+      <span lang="zh-Hant">技術細節：這裡的 sample-and-hold 效果是 <code>SampleRateReducer</code>，先用 C++ 寫成（<code>cpp/src/SampleRateReducer.cpp</code>），再逐行移植成 AudioWorklet。兩個版本通過同一組測試。</span>
+    </p>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="01-what-is-sound.html"><span lang="en">← What is sound?</span><span lang="zh-Hant">← 聲音是什麼？</span></a>
+      <a href="03-timbre.html"><span lang="en">Next: Timbre &amp; harmonics →</span><span lang="zh-Hant">下一章：音色與泛音 →</span></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script type="module" src="../js/ch2.js"></script>
+</body>
+</html>
