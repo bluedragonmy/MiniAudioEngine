@@ -57,6 +57,9 @@ std::vector<double> SamplerEngine::renderMaster(double durationSec)
 {
     int numSamples = static_cast<int>(durationSec * sampleRate);
     std::vector<double> outBuffer(numSamples * 2, 0.0); // Stereo interleaved
+
+    // 每次算圖都從安靜開始，不帶著上一次的殘響
+    for (auto& pair : pads) pair.second.reset();
     
     // Sort events by time
     std::sort(events.begin(), events.end());
@@ -98,8 +101,8 @@ std::vector<double> SamplerEngine::renderStem(const std::string& padName, double
     int numSamples = static_cast<int>(durationSec * sampleRate);
     std::vector<double> outBuffer(numSamples * 2, 0.0);
     
-    // Reset all pads first
-    for (auto& pair : pads) pair.second.noteOff();
+    // Reset all pads first（noteOff 只會進 release，殘響還在，所以用 reset）
+    for (auto& pair : pads) pair.second.reset();
     
     std::sort(events.begin(), events.end());
     size_t eventIndex = 0;

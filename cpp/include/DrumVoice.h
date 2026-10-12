@@ -31,6 +31,7 @@ public:
     void noteOn(double velocity = 1.0);
     void noteOff();
     bool isActive() const;
+    void reset();   // 立刻靜音並回到起點
     
     // Process next sample (Stereo output)
     void process(double& outLeft, double& outRight);
@@ -41,6 +42,7 @@ private:
     
     // Synth
     Oscillator osc;
+    double synthBaseFreq;
     
     // Sampler
     std::vector<double> sampleBuffer;

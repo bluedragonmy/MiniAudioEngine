@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build main",
+      "type": "shell",
+      "command": "g++ -std=c++17 -Wall -g -Icpp/include cpp/src/*.cpp -o build/main.exe",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "run tests",
+      "type": "shell",
+      "command": "sh cpp/tests/run_tests.sh && node site/js/dsp/aliasing.test.mjs && node site/js/dsp/dsp.test.mjs",
+      "group": "test",
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "serve site",
+      "type": "shell",
+      "command": "python -m http.server 8000 --directory site",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

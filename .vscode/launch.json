@@ -2,22 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "C/C++ Runner: Debug Session",
+      "name": "Debug main (cpp/src)",
       "type": "cppdbg",
       "request": "launch",
+      "program": "${workspaceFolder}/build/main.exe",
       "args": [],
+      "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Users/jjpc3/Desktop/ESP",
-      "program": "c:/Users/jjpc3/Desktop/ESP/build/Debug/outDebug",
+      "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
+      "preLaunchTask": "build main",
       "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
+        { "description": "Enable pretty-printing for gdb", "text": "-enable-pretty-printing", "ignoreFailures": true }
       ]
     }
   ]

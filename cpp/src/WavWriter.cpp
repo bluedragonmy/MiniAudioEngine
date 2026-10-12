@@ -48,7 +48,9 @@ void WavWriter::write(
     // --- 把 -1.0~+1.0 轉成 16-bit 整數並寫入 ---
     for (double s : samples)
     {
-        int16_t pcm = static_cast<int16_t>(s * 32767.0);
+        // 先限制在 -1 ~ +1：超過的話轉 int16_t 會溢位翻轉（+1.1 變成很大的負數）
+        double clipped = s > 1.0 ? 1.0 : (s < -1.0 ? -1.0 : s);
+        int16_t pcm = static_cast<int16_t>(clipped * 32767.0);
         file.write(reinterpret_cast<char*>(&pcm), 2);
     }
 

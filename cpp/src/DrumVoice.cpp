@@ -4,7 +4,7 @@
 
 DrumVoice::DrumVoice(double sampleRate)
     : mode(Mode::Synth), sampleRate(sampleRate),
-      osc(440.0, sampleRate),
+      osc(440.0, sampleRate), synthBaseFreq(440.0),
       sampleOriginalRate(sampleRate), samplePosition(0.0),
       volumeLinear(1.0), panLeft(0.707), panRight(0.707), pitchRatio(1.0),
       currentVelocity(1.0)
@@ -25,7 +25,8 @@ void DrumVoice::setSample(const std::vector<double>& sampleData, double original
 
 void DrumVoice::setSynthFrequency(double freq)
 {
-    osc.setFrequency(freq);
+    synthBaseFreq = freq;
+    osc.setFrequency(synthBaseFreq * pitchRatio);
 }
 
 void DrumVoice::setVolume(double db)
@@ -44,6 +45,8 @@ void DrumVoice::setPan(double panValue)
 void DrumVoice::setPitch(double semitones)
 {
     pitchRatio = std::pow(2.0, semitones / 12.0);
+    // Synth 模式也要跟著變調（原本只有 Sampler 模式有作用）
+    osc.setFrequency(synthBaseFreq * pitchRatio);
 }
 
 void DrumVoice::setEnvelope(double attack, double decay, double sustain, double release)
@@ -63,6 +66,12 @@ void DrumVoice::noteOff()
     envelope.noteOff();
 }
 
+void DrumVoice::reset()
+{
+    envelope.reset();
+    samplePosition = 0.0;
+}
+
 bool DrumVoice::isActive() const
 {
     return envelope.isActive();
@@ -79,8 +88,7 @@ void DrumVoice::process(double& outLeft, double& outRight)
     double rawSample = 0.0;
 
     if (mode == Mode::Synth) {
-        // Adjust oscillator frequency based on pitch ratio
-        // Note: For a real synth we might want to store base frequency, but for simplicity we assume osc is already set to base * pitchRatio
+        // osc 的頻率已經是 synthBaseFreq * pitchRatio（見 setPitch）
         rawSample = osc.process();
     } else {
         // Sampler mode with linear interpolation

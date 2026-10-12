@@ -24,6 +24,9 @@ public:
     
     bool isActive() const;
 
+    // 立刻回到 Idle、音量 0（不經過 release），重新算圖前用
+    void reset();
+
 private:
     State currentState;
     double sampleRate;

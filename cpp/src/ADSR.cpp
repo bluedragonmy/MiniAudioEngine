@@ -84,6 +84,12 @@ double ADSR::process()
     return currentLevel;
 }
 
+void ADSR::reset()
+{
+    currentState = State::Idle;
+    currentLevel = 0.0;
+}
+
 bool ADSR::isActive() const
 {
     return currentState != State::Idle;

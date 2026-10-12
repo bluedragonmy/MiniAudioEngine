@@ -9,3 +9,6 @@ $CXX cpp/tests/test_dsp.cpp cpp/src/LowPassFilter.cpp cpp/src/AdditiveOscillator
      cpp/src/ADSR.cpp -o build/test_dsp
 ./build/test_aliasing
 ./build/test_dsp
+$CXX cpp/tests/test_engine.cpp cpp/src/WavWriter.cpp cpp/src/WavReader.cpp cpp/src/DrumVoice.cpp \
+     cpp/src/SamplerEngine.cpp cpp/src/Oscillator.cpp cpp/src/ADSR.cpp -o build/test_engine
+./build/test_engine
