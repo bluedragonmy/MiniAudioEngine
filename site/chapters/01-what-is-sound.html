@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Is Sound? · Sound Basics</title>
+  <meta name="description" content="Chapter 1: frequency, amplitude and waveforms — hear and see a sine wave you control." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/lang.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html">Sound<span class="dot">·</span>Basics</a>
+    <button class="lang-toggle" type="button">中文</button>
+  </header>
+
+  <main>
+    <p class="eyebrow"><span lang="en">Chapter 1</span><span lang="zh-Hant">第 1 章</span></p>
+    <h1><span lang="en">What is sound?</span><span lang="zh-Hant">聲音是什麼？</span></h1>
+    <p class="lede">
+      <span lang="en">Every knob in your DAW changes one of two things about a wave: how fast it moves, or how big it is. Let's hear both.</span>
+      <span lang="zh-Hant">DAW 裡的每一顆旋鈕，改變的都是波的兩件事之一：它振動得多快，或是振動得多大。我們來親耳聽聽看。</span>
+    </p>
+
+    <p>
+      <span lang="en">Sound is air pressure moving back and forth. A speaker cone pushes the air, pulls it back, pushes again — and your eardrum follows along. If we draw that pressure over time, we get a <strong>waveform</strong>.</span>
+      <span lang="zh-Hant">聲音就是空氣壓力的來回變化。喇叭振膜把空氣往前推、再拉回來、再推出去，你的耳膜就跟著一起振動。把這個壓力隨時間的變化畫出來，就是<strong>波形</strong>。</span>
+    </p>
+    <p>
+      <span lang="en">The simplest waveform is the <strong>sine wave</strong>: a pure tone with nothing else in it. Press play and move the sliders.</span>
+      <span lang="zh-Hant">最簡單的波形是<strong>正弦波</strong>：一個純粹、沒有任何雜質的音。按下播放，然後拉拉看滑桿。</span>
+    </p>
+
+    <!-- Demo 1 -->
+    <section class="demo" aria-labelledby="demo1-title">
+      <div class="demo-title" id="demo1-title">
+        <span lang="en">Try it: your first sound</span><span lang="zh-Hant">動手試：你的第一個聲音</span>
+      </div>
+      <canvas id="wave" aria-label="Waveform of the tone, 10 milliseconds wide"></canvas>
+      <div class="readout" aria-live="polite">
+        <span><span lang="en">Note</span><span lang="zh-Hant">音名</span> <b id="r-note"></b></span>
+        <span><span lang="en">One cycle</span><span lang="zh-Hant">一個週期</span> <b id="r-period"></b></span>
+        <span><span lang="en">Cycles shown</span><span lang="zh-Hant">畫面中週期數</span> <b id="r-cycles"></b></span>
+        <span><span lang="en">Level</span><span lang="zh-Hant">音量</span> <b id="r-db"></b></span>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label for="freq"><span lang="en">Frequency</span><span lang="zh-Hant">頻率</span></label>
+          <input type="range" id="freq" min="0" max="1000" step="1" />
+          <output id="freq-out" for="freq"></output>
+        </div>
+        <div class="control">
+          <label for="amp"><span lang="en">Amplitude</span><span lang="zh-Hant">振幅</span></label>
+          <input type="range" id="amp" min="0" max="100" step="1" />
+          <output id="amp-out" for="amp"></output>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" id="play" type="button" aria-pressed="false"><span lang="en">▶ Play</span><span lang="zh-Hant">▶ 播放</span></button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">Tip: start with your volume low, especially on headphones.</span>
+        <span lang="zh-Hant">提醒：先把音量調小，戴耳機時尤其要注意。</span>
+      </p>
+      <p class="notice" id="dsp-note" hidden style="margin:4px 0 0">
+        <span lang="en">This tone is computed one sample at a time by a JavaScript port of the project's C++ oscillator (<code>cpp/src/Oscillator.cpp</code>), not the browser's built-in one.</span>
+        <span lang="zh-Hant">這個音是由本專案 C++ 振盪器（<code>cpp/src/Oscillator.cpp</code>）的 JavaScript 移植版逐個取樣計算出來的，不是瀏覽器內建的振盪器。</span>
+      </p>
+    </section>
+
+    <h2><span lang="en">Frequency is pitch</span><span lang="zh-Hant">頻率就是音高</span></h2>
+    <p>
+      <span lang="en"><strong>Frequency</strong> is how many times the wave repeats per second, measured in hertz (Hz). More cycles per second sounds higher. Watch the canvas: at 100 Hz you see one cycle in 10 ms; at 1000 Hz you see ten.</span>
+      <span lang="zh-Hant"><strong>頻率</strong>是波每秒重複的次數，單位是赫茲（Hz）。每秒重複越多次，聽起來就越高。看看上面的圖：100 Hz 時，10 毫秒裡只有一個週期；1000 Hz 時就有十個。</span>
+    </p>
+    <p>
+      <span lang="en">Here's the surprise: our ears hear pitch in <em>ratios</em>, not steps. Doubling the frequency always sounds like the same jump — one <strong>octave</strong>. Play these four: they're all the note A.</span>
+      <span lang="zh-Hant">有趣的地方來了：耳朵聽音高是看<em>倍數</em>，不是看相差幾 Hz。頻率變成兩倍，聽起來永遠是同樣的距離，也就是一個<strong>八度</strong>。播放下面四個音，它們全都是 A。</span>
+    </p>
+
+    <!-- Demo 2 -->
+    <section class="demo" aria-labelledby="demo2-title">
+      <div class="demo-title" id="demo2-title"><span lang="en">Octaves of A</span><span lang="zh-Hant">A 的各個八度</span></div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn" type="button" data-octave="110" aria-pressed="false">A2 · 110 Hz</button>
+        <button class="btn" type="button" data-octave="220" aria-pressed="false">A3 · 220 Hz</button>
+        <button class="btn" type="button" data-octave="440" aria-pressed="false">A4 · 440 Hz</button>
+        <button class="btn" type="button" data-octave="880" aria-pressed="false">A5 · 880 Hz</button>
+      </div>
+      <p class="notice" style="margin:12px 0 0">
+        <span lang="en">110 → 220 is a gap of 110 Hz; 440 → 880 is a gap of 440 Hz. Same musical distance. That's why the frequency slider above (and every EQ in your DAW) uses a log scale.</span>
+        <span lang="zh-Hant">110 → 220 差了 110 Hz，440 → 880 差了 440 Hz，但在音樂上是同樣的距離。這就是為什麼上面的頻率滑桿（以及 DAW 裡所有的 EQ）都用對數刻度。</span>
+      </p>
+    </section>
+
+    <p>
+      <span lang="en">Humans hear roughly 20 Hz to 20,000 Hz (the top end drops with age). In mixing you'll hear people talk about ranges: <strong>lows</strong> (kick, bass, below ~250 Hz), <strong>mids</strong> (vocals, guitars, ~250 Hz–4 kHz) and <strong>highs</strong> (cymbals, air, above ~4 kHz).</span>
+      <span lang="zh-Hant">人耳大約聽得到 20 Hz 到 20,000 Hz（高頻上限會隨年齡下降）。混音時大家常講幾個頻段：<strong>低頻</strong>（kick、貝斯，約 250 Hz 以下）、<strong>中頻</strong>（人聲、吉他，約 250 Hz–4 kHz）、<strong>高頻</strong>（鈸、空氣感，約 4 kHz 以上）。</span>
+    </p>
+
+    <h2><span lang="en">Amplitude is loudness</span><span lang="zh-Hant">振幅就是音量</span></h2>
+    <p>
+      <span lang="en"><strong>Amplitude</strong> is how far the wave swings from the middle line. Bigger swings push more air and sound louder. Drag the amplitude slider and watch the wave grow and shrink — the pitch doesn't change.</span>
+      <span lang="zh-Hant"><strong>振幅</strong>是波離開中線擺動的幅度。擺得越大，推動的空氣越多，聽起來就越大聲。拖動振幅滑桿，看波形變大變小，但音高不會改變。</span>
+    </p>
+    <p>
+      <span lang="en">Like pitch, loudness works in ratios, so audio uses <strong>decibels (dB)</strong>. Halving the amplitude is always about <strong>−6 dB</strong>, whether you start loud or quiet. Try it: 100% → 50% → 25% shows 0, −6 and −12 dB.</span>
+      <span lang="zh-Hant">跟音高一樣，音量也是看倍數，所以音訊用<strong>分貝（dB）</strong>來表示。振幅減半永遠大約是 <strong>−6 dB</strong>，不管原本多大聲。試試看：100% → 50% → 25%，會顯示 0、−6、−12 dB。</span>
+    </p>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Why 0 dB is the top</span><span lang="zh-Hant">為什麼 0 dB 是最大值</span></div>
+      <p>
+        <span lang="en">In a DAW, meters count down from <strong>0 dBFS</strong> ("full scale") — the biggest value a digital file can hold. Push past it and the top of the wave gets chopped off: <strong>clipping</strong>, which sounds harsh and crunchy. That's why a healthy mix lives in negative numbers. We'll come back to this in the mixing chapters.</span>
+        <span lang="zh-Hant">在 DAW 裡，音量表是從 <strong>0 dBFS</strong>（Full Scale，滿刻度）往下算，那是數位檔案能存的最大值。超過它，波形頂端就會被削掉，這叫做<strong>削波（clipping）</strong>，聽起來會刺耳、有破音。所以健康的混音音量都在負數。之後的混音章節會再回來談這件事。</span>
+      </p>
+    </div>
+
+    <h2><span lang="en">Train your ears</span><span lang="zh-Hant">練練耳朵</span></h2>
+    <p>
+      <span lang="en">You'll hear two short tones. Which one is higher? The gap is between 1 and 4 semitones, so some rounds are tricky.</span>
+      <span lang="zh-Hant">你會聽到兩個短音，哪一個比較高？兩個音相差 1 到 4 個半音，所以有幾題會有點難。</span>
+    </p>
+
+    <!-- Demo 3 -->
+    <section class="demo" aria-labelledby="demo3-title">
+      <div class="demo-title" id="demo3-title"><span lang="en">Which one is higher?</span><span lang="zh-Hant">哪一個比較高？</span></div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn primary" id="quiz-play" type="button"><span lang="en">▶ Play the two tones</span><span lang="zh-Hant">▶ 播放兩個音</span></button>
+      </div>
+      <div class="quiz-options">
+        <button class="btn" type="button" data-answer="first"><span lang="en">The first</span><span lang="zh-Hant">第一個</span></button>
+        <button class="btn" type="button" data-answer="second"><span lang="en">The second</span><span lang="zh-Hant">第二個</span></button>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
+    </section>
+
+    <div class="callout">
+      <div class="callout-title"><span lang="en">Now try it in your DAW</span><span lang="zh-Hant">換你在 DAW 裡試試</span></div>
+      <ol>
+        <li>
+          <span lang="en">Load a basic synth (Ableton: <em>Operator</em>, FL Studio: <em>3x Osc</em>, Logic: <em>Retro Synth</em>) and pick a sine wave.</span>
+          <span lang="zh-Hant">載入一個基本合成器（Ableton：<em>Operator</em>，FL Studio：<em>3x Osc</em>，Logic：<em>Retro Synth</em>），選正弦波。</span>
+        </li>
+        <li>
+          <span lang="en">Put a spectrum analyzer after it (Ableton: <em>Spectrum</em>, FL Studio: <em>Fruity Parametric EQ 2</em>, Logic: <em>Channel EQ</em> with the analyzer on).</span>
+          <span lang="zh-Hant">在後面加一個頻譜分析器（Ableton：<em>Spectrum</em>，FL Studio：<em>Fruity Parametric EQ 2</em>，Logic：開啟分析器的 <em>Channel EQ</em>）。</span>
+        </li>
+        <li>
+          <span lang="en">Play A4. You'll see a single spike at 440 Hz. Play A3 — the spike moves to 220 Hz. Turn the volume down 6 dB and watch the meter.</span>
+          <span lang="zh-Hant">彈 A4，你會看到 440 Hz 有一根尖峰。彈 A3，尖峰會移到 220 Hz。把音量調低 6 dB，看看音量表的變化。</span>
+        </li>
+      </ol>
+    </div>
+
+    <h2><span lang="en">Key takeaways</span><span lang="zh-Hant">重點整理</span></h2>
+    <ul>
+      <li><span lang="en"><strong>Frequency</strong> (Hz) = pitch. Double it and you go up one octave.</span><span lang="zh-Hant"><strong>頻率</strong>（Hz）＝音高。變成兩倍就是高一個八度。</span></li>
+      <li><span lang="en"><strong>Amplitude</strong> = loudness, measured in <strong>dB</strong>. Half the amplitude ≈ −6 dB.</span><span lang="zh-Hant"><strong>振幅</strong>＝音量，用 <strong>dB</strong> 表示。振幅減半約等於 −6 dB。</span></li>
+      <li><span lang="en">Digital audio tops out at <strong>0 dBFS</strong>. Above that: clipping.</span><span lang="zh-Hant">數位音訊的上限是 <strong>0 dBFS</strong>，超過就會削波。</span></li>
+    </ul>
+
+    <nav class="pager" aria-label="Chapter navigation">
+      <a href="../index.html"><span lang="en">← All chapters</span><span lang="zh-Hant">← 所有章節</span></a>
+      <span><span lang="en">Next: Digital sound (coming soon) →</span><span lang="zh-Hant">下一章：數位聲音（即將推出）→</span></span>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <span lang="en">Sound Basics · part of MiniAudioEngine</span><span lang="zh-Hant">Sound Basics · MiniAudioEngine 的一部分</span>
+  </footer>
+
+  <script src="../js/audio/engine.js"></script>
+  <script src="../js/ch1.js"></script>
+</body>
+</html>
