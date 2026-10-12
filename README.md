@@ -4,7 +4,7 @@ A from-scratch audio DSP project, and **Sound Basics**: an interactive, bilingua
 
 Each chapter explains one idea, lets you hear and see it in the browser, and then tells you where to try it in your own DAW.
 
-**Live site:** _(add the GitHub Pages URL here after the first deploy — see [Deploy](#deploy))_
+**Live site:** https://bluedragonmy.github.io/MiniAudioEngine/
 
 ## Sound Basics (`site/`)
 
